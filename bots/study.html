@@ -10,6 +10,7 @@
       background:#f5f7fb;
       background-size:cover;
       background-position:center;
+      overflow:hidden;
     }
 
     body.dark{
@@ -17,6 +18,7 @@
       color:white;
     }
 
+    /* HEADER */
     .topbar{
       position:fixed;
       top:0;left:0;right:0;
@@ -28,7 +30,7 @@
       background:rgba(255,255,255,0.85);
       backdrop-filter:blur(10px);
       border-bottom:1px solid #eee;
-      z-index:1000;
+      z-index:9999;
     }
 
     body.dark .topbar{
@@ -36,25 +38,26 @@
       border-color:#222;
     }
 
-    .btn{
+    .iconBtn{
       position:absolute;
-      top:10px;
-      padding:6px 10px;
-      border:none;
-      border-radius:8px;
-      font-size:11px;
+      top:12px;
+      width:22px;
+      height:22px;
       cursor:pointer;
+      opacity:.8;
     }
 
-    .bg{right:70px;background:#0a84ff;color:white}
-    .mode{left:8px;background:#111;color:white}
-    body.dark .mode{background:#fff;color:#000}
-    .clear{right:8px;background:#ff3b30;color:white}
+    .iconBtn:hover{opacity:1}
 
+    .left{left:10px}
+    .mid{left:42px}
+    .right{right:10px}
+
+    /* CHAT */
     .chat{
       position:absolute;
       top:50px;
-      bottom:140px;
+      bottom:70px;
       left:0;
       right:0;
       overflow-y:auto;
@@ -71,12 +74,11 @@
       word-break:break-word;
       clear:both;
       animation:pop .15s ease;
-      position:relative;
     }
 
     @keyframes pop{
       from{opacity:0;transform:translateY(6px)}
-      to{opacity:1;transform:translateY(0)}
+      to{opacity:1}
     }
 
     .user{background:#0a84ff;color:white;float:right}
@@ -87,11 +89,8 @@
       color:white;
     }
 
-    .msgText{
-      white-space:pre-wrap;
-    }
+    .msgText{white-space:pre-wrap}
 
-    /* ACTIONS SVG */
     .actions{
       display:flex;
       gap:10px;
@@ -103,23 +102,9 @@
       width:16px;
       height:16px;
       cursor:pointer;
-      transition:.2s;
     }
 
-    .icon:hover{
-      transform:scale(1.15);
-      opacity:1;
-    }
-
-    /* REPLY STYLE */
-    .replyBlock{
-      border-left:3px solid #0a84ff;
-      padding-left:8px;
-      margin-bottom:6px;
-      font-size:12px;
-      opacity:.75;
-    }
-
+    /* INPUT */
     .inputbar{
       position:fixed;
       bottom:0;
@@ -148,16 +133,34 @@
       color:white;
     }
 
+    input[type="file"]{display:none}
   </style>
 </head>
 
 <body>
 
+<!-- HEADER SVG ICONS -->
 <div class="topbar">
   Magram
-  <button class="btn mode" onclick="toggleMode()">🌙</button>
-  <button class="btn bg" onclick="pickBg()">🖼</button>
-  <button class="btn clear" onclick="clearAll()">X</button>
+
+  <!-- MODE -->
+  <svg class="iconBtn left" onclick="toggleMode()" viewBox="0 0 24 24" fill="none">
+    <path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" stroke="currentColor" stroke-width="2"/>
+  </svg>
+
+  <!-- BG -->
+  <svg class="iconBtn mid" onclick="pickBg()" viewBox="0 0 24 24" fill="none">
+    <path d="M4 4H20V20H4V4Z" stroke="currentColor" stroke-width="2"/>
+    <path d="M4 16L9 11L13 15L16 12L20 16" stroke="currentColor" stroke-width="2"/>
+  </svg>
+
+  <!-- CLEAR -->
+  <svg class="iconBtn right" onclick="clearAll()" viewBox="0 0 24 24" fill="none">
+    <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
+    <path d="M8 6V4H16V6" stroke="currentColor" stroke-width="2"/>
+    <path d="M6 6L7 20H17L18 6" stroke="currentColor" stroke-width="2"/>
+  </svg>
+
 </div>
 
 <div class="chat" id="chat"></div>
@@ -167,44 +170,57 @@
   <button onclick="send()">Send</button>
 </div>
 
+<input type="file" id="bgFile" accept="image/*">
+
 <script>
 
 var chat=document.getElementById("chat");
 var replyTo=null;
+
+/* LOAD */
+window.onload=()=>{
+
+  let saved = localStorage.getItem("chat");
+  if(saved) chat.innerHTML = saved;
+
+  let bg = localStorage.getItem("bg");
+  if(bg) document.body.style.backgroundImage="url("+bg+")";
+
+  let mode = localStorage.getItem("mode");
+  if(mode==="dark") document.body.classList.add("dark");
+
+  scroll();
+};
+
+/* SAVE */
+function save(){
+  localStorage.setItem("chat", chat.innerHTML);
+}
 
 /* SCROLL */
 function scroll(){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* ADD MESSAGE */
-function add(text,type,reply){
+/* ADD MSG */
+function add(text,type){
 
   let d=document.createElement("div");
   d.className="msg "+type;
 
-  let replyHtml = reply ? `<div class="replyBlock">${reply}</div>` : "";
-
   d.innerHTML=`
-    ${replyHtml}
     <div class="msgText">${text}</div>
 
     <div class="actions">
 
       <!-- COPY -->
-      <svg class="icon" onclick="copyMsg(this)" viewBox="0 0 24 24" fill="none">
+      <svg class="icon" onclick="copyMsg(this)" viewBox="0 0 24 24">
         <path d="M8 8H18V18H8V8Z" stroke="currentColor" stroke-width="2"/>
         <path d="M6 16H6C5 16 4 15 4 14V6C4 5 5 4 6 4H14C15 4 16 5 16 6V6" stroke="currentColor" stroke-width="2"/>
       </svg>
 
-      <!-- REPLY -->
-      <svg class="icon" onclick="replyMsg(this)" viewBox="0 0 24 24" fill="none">
-        <path d="M9 10L4 15L9 20" stroke="currentColor" stroke-width="2"/>
-        <path d="M20 4V11C20 14 18 16 15 16H4" stroke="currentColor" stroke-width="2"/>
-      </svg>
-
       <!-- DELETE -->
-      <svg class="icon" onclick="deleteMsg(this)" viewBox="0 0 24 24" fill="none">
+      <svg class="icon" onclick="deleteMsg(this)" viewBox="0 0 24 24">
         <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
         <path d="M8 6V4H16V6" stroke="currentColor" stroke-width="2"/>
         <path d="M6 6L7 20H17L18 6" stroke="currentColor" stroke-width="2"/>
@@ -215,6 +231,7 @@ function add(text,type,reply){
 
   chat.appendChild(d);
   scroll();
+  save();
 }
 
 /* COPY */
@@ -225,15 +242,10 @@ function copyMsg(el){
 
 /* DELETE */
 function deleteMsg(el){
-  if(confirm("Supprimer ?")){
+  if(confirm("Supprimer ce message ?")){
     el.closest(".msg").remove();
+    save();
   }
-}
-
-/* REPLY */
-function replyMsg(el){
-  let msg = el.closest(".msg");
-  replyTo = msg.innerText;
 }
 
 /* SEND */
@@ -243,7 +255,7 @@ async function send(){
   let t=i.value.trim();
   if(!t) return;
 
-  add(t,"user",replyTo);
+  add(t,"user");
 
   i.value="";
 
@@ -257,14 +269,49 @@ async function send(){
     let d=await r.json();
 
     if(d.status){
-      add(d.response,"bot",null);
+      add(d.response,"bot");
     }
 
   }catch(e){
     add("error","bot");
   }
+}
 
-  replyTo=null;
+/* MODE */
+function toggleMode(){
+  document.body.classList.toggle("dark");
+
+  localStorage.setItem(
+    "mode",
+    document.body.classList.contains("dark") ? "dark":"light"
+  );
+}
+
+/* BG */
+function pickBg(){
+  let f=document.getElementById("bgFile");
+
+  f.onchange=()=>{
+    let file=f.files[0];
+    let reader=new FileReader();
+
+    reader.onload=()=>{
+      document.body.style.backgroundImage="url("+reader.result+")";
+      localStorage.setItem("bg",reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  f.click();
+}
+
+/* CLEAR */
+function clearAll(){
+  if(confirm("Tout supprimer ?")){
+    chat.innerHTML="";
+    localStorage.clear();
+  }
 }
 
 </script>
