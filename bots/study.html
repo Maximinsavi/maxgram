@@ -10,7 +10,6 @@
       background:#f5f7fb;
       background-size:cover;
       background-position:center;
-      overflow:hidden;
     }
 
     body.dark{
@@ -82,12 +81,13 @@
     }
 
     .msgText{
-      margin-bottom:4px;
+      white-space:pre-wrap;
     }
 
     .actions{
       font-size:10px;
       opacity:.6;
+      margin-top:5px;
       display:flex;
       gap:8px;
     }
@@ -197,34 +197,20 @@ window.onload=()=>{
   let mode = localStorage.getItem("mode");
   if(mode=="dark") document.body.classList.add("dark");
 
-  let reply = localStorage.getItem("reply");
-  if(reply){
-    replyTo = reply;
-    showReply(replyTo);
-  }
-
   scroll();
 };
 
 /* ================= SAVE ================= */
 function save(){
   localStorage.setItem("chat", chat.innerHTML);
-
-  if(replyTo){
-    localStorage.setItem("reply", replyTo);
-  }else{
-    localStorage.removeItem("reply");
-  }
 }
 
-/* ================= SCROLL ================= */
+/* ================= SCROLL (FREE) ================= */
 function scroll(){
-  setTimeout(()=>{
-    chat.scrollTop = chat.scrollHeight;
-  },50);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-/* ================= MESSAGE ================= */
+/* ================= ADD MESSAGE ================= */
 function add(text,type){
 
   let d=document.createElement("div");
@@ -270,10 +256,9 @@ function replyMsg(el){
   replyTo = msg.getAttribute("data-text");
 
   showReply(replyTo);
-  save();
 }
 
-/* ================= REPLY UI ================= */
+/* ================= SHOW REPLY ================= */
 function showReply(text){
   let bar=document.getElementById("replyBar");
   document.getElementById("replyText").innerText = text;
@@ -284,7 +269,6 @@ function showReply(text){
 function clearReply(){
   replyTo=null;
   document.getElementById("replyBar").style.display="none";
-  localStorage.removeItem("reply");
 }
 
 /* ================= SEND ================= */
@@ -294,8 +278,17 @@ async function send(){
   let t=i.value.trim();
   if(!t) return;
 
-  add(t,"user");
+  let finalText = t;
+
+  if(replyTo){
+    finalText = "↪️ " + replyTo + "\n\n" + t;
+  }
+
+  add(finalText,"user");
+
   i.value="";
+
+  clearReply(); // IMPORTANT: disparaît direct
 
   try{
 
@@ -309,8 +302,6 @@ async function send(){
     if(d.status){
       add("🤖 "+d.response,"bot");
     }
-
-    clearReply();
 
   }catch(e){
     add("error","bot");
