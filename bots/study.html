@@ -8,26 +8,34 @@
       margin:0;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
       background:#f5f7fb;
-      transition:.2s;
       overflow:hidden;
     }
 
     body.dark{background:#0f0f1a;color:white}
 
+    /* HEADER FIX */
     .topbar{
       position:fixed;
       top:0;left:0;right:0;
-      background:rgba(255,255,255,0.9);
-      backdrop-filter:blur(10px);
-      padding:10px;
-      text-align:center;
+      height:50px;
+      background:rgba(255,255,255,0.85);
+      backdrop-filter:blur(12px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
       font-weight:600;
-      z-index:10;
+      z-index:1000;
+      border-bottom:1px solid #eee;
+    }
+
+    body.dark .topbar{
+      background:rgba(20,20,30,0.85);
+      border-color:#222;
     }
 
     .mode,.clear,.bg{
       position:absolute;
-      top:8px;
+      top:10px;
       padding:5px 10px;
       border:none;
       border-radius:8px;
@@ -35,13 +43,19 @@
     }
 
     .mode{left:8px}
-    .clear{right:8px;background:#ff3b30;color:white}
     .bg{right:70px;background:#0a84ff;color:white}
+    .clear{right:8px;background:#ff3b30;color:white}
 
+    /* CHAT FIX SCROLL */
     .chat{
-      padding:70px 10px 120px;
+      position:absolute;
+      top:50px;
+      bottom:120px;
+      left:0;
+      right:0;
       overflow-y:auto;
-      height:100vh;
+      padding:10px;
+      -webkit-overflow-scrolling:touch;
     }
 
     .msg{
@@ -55,7 +69,6 @@
       clear:both;
       position:relative;
       transition:transform .2s ease;
-      touch-action:pan-y;
     }
 
     .user{
@@ -82,22 +95,37 @@
       gap:8px;
     }
 
-    .replyBox{
-      font-size:10px;
-      opacity:.6;
-      border-left:2px solid #999;
-      padding-left:5px;
-      margin-bottom:4px;
+    /* REPLY BAR (IMPORTANT FIX) */
+    .replyBar{
+      position:fixed;
+      bottom:60px;
+      left:0;right:0;
+      background:rgba(255,255,255,0.95);
+      backdrop-filter:blur(10px);
+      padding:8px 10px;
+      font-size:12px;
+      display:none;
+      border-top:1px solid #ddd;
+      z-index:999;
     }
 
+    body.dark .replyBar{
+      background:rgba(20,20,30,0.9);
+      border-color:#222;
+    }
+
+    /* INPUT */
     .inputbar{
       position:fixed;
-      bottom:0;left:0;right:0;
-      background:rgba(255,255,255,0.9);
-      backdrop-filter:blur(10px);
+      bottom:0;
+      left:0;
+      right:0;
       display:flex;
       padding:8px;
       gap:6px;
+      background:rgba(255,255,255,0.9);
+      backdrop-filter:blur(10px);
+      z-index:1000;
     }
 
     input{
@@ -114,7 +142,6 @@
       border-radius:14px;
       background:#0a84ff;
       color:white;
-      font-size:13px;
     }
 
   </style>
@@ -129,6 +156,9 @@
   <button class="clear" onclick="clearAll()">X</button>
 </div>
 
+<!-- REPLY DISPLAY FIX -->
+<div class="replyBar" id="replyBar"></div>
+
 <div class="chat" id="chat"></div>
 
 <div class="inputbar">
@@ -141,25 +171,41 @@
 var uid="u_"+Math.random().toString(36).slice(2);
 var chat=document.getElementById("chat");
 var replyTo=null;
+var autoScroll=true;
 
-/* SCROLL */
+/* DETECT USER SCROLL */
+chat.addEventListener("scroll",()=>{
+  let nearBottom = chat.scrollTop + chat.clientHeight >= chat.scrollHeight - 50;
+  autoScroll = nearBottom;
+});
+
+/* SCROLL FIX */
 function scroll(){
-  chat.scrollTop=chat.scrollHeight;
+  if(autoScroll){
+    chat.scrollTo({top:chat.scrollHeight,behavior:"smooth"});
+  }
 }
 
-/* ADD MSG */
-function add(text,type,reply){
+/* REPLY BAR UI */
+function showReplyBar(text){
+  let bar=document.getElementById("replyBar");
+  bar.style.display="block";
+  bar.innerText="Replying to: "+text;
+}
+
+function clearReplyBar(){
+  let bar=document.getElementById("replyBar");
+  bar.style.display="none";
+  bar.innerText="";
+}
+
+/* ADD MESSAGE */
+function add(text,type){
 
   let d=document.createElement("div");
   d.className="msg "+type;
 
-  let html="";
-
-  if(reply){
-    html+=`<div class="replyBox">${reply}</div>`;
-  }
-
-  d.innerHTML=html+text+`
+  d.innerHTML=text+`
     <div class="actions">
       <span onclick="copy(this)">copy</span>
       <span onclick="del(this)">del</span>
@@ -188,9 +234,10 @@ function del(e){
 /* REPLY */
 function setReply(e){
   replyTo=e.parentElement.parentElement.innerText;
+  showReplyBar(replyTo);
 }
 
-/* SWIPE WHATSAPP */
+/* SWIPE FIX WHATSAPP */
 function enableSwipe(el){
 
   let startX=0;
@@ -202,21 +249,18 @@ function enableSwipe(el){
 
   el.addEventListener("touchmove",e=>{
     moveX=e.touches[0].clientX-startX;
-
     if(moveX<0){
       el.style.transform=`translateX(${moveX}px)`;
     }
   });
 
   el.addEventListener("touchend",()=>{
-
     if(moveX<-80){
-      el.style.transform="translateX(-120px)";
-      setTimeout(()=>el.style.transform="translateX(0px)",200);
-    }else{
-      el.style.transform="translateX(0px)";
+      setReply({parentElement:{parentElement:el}});
+      showReplyBar(el.innerText);
     }
 
+    el.style.transform="translateX(0)";
     moveX=0;
   });
 }
@@ -232,6 +276,8 @@ async function send(){
 
   i.value="";
 
+  chat.appendChild(document.createElement("div"));
+
   try{
 
     let r=await fetch(
@@ -242,9 +288,10 @@ async function send(){
     let d=await r.json();
 
     if(d.status){
-      add("🤖 "+d.response,"bot",replyTo);
+      add("🤖 "+d.response,"bot");
     }
 
+    clearReplyBar();
     replyTo=null;
 
   }catch(e){
@@ -268,6 +315,7 @@ function toggle(){
 /* CLEAR */
 function clearAll(){
   chat.innerHTML="";
+  clearReplyBar();
 }
 
 </script>
