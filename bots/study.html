@@ -14,7 +14,6 @@
 
     body.dark{background:#0f0f1a;color:white}
 
-    /* HEADER */
     .topbar{
       position:fixed;
       top:0;left:0;right:0;
@@ -48,7 +47,6 @@
     .mid{left:45px}
     .right{right:10px}
 
-    /* CHAT */
     .chat{
       position:absolute;
       top:50px;
@@ -83,16 +81,16 @@
 
     .msgText{white-space:pre-wrap}
 
-    /* REPLY BLOCK IN MESSAGE */
-    .replyInMsg{
-      border-left:3px solid #0a84ff;
-      padding-left:6px;
-      margin-bottom:6px;
-      font-size:12px;
-      opacity:.7;
+    /* MARKDOWN STYLE (GRIS) */
+    .md-gray{
+      color:#8a8a8a;
+      font-weight:500;
     }
 
-    /* ACTIONS */
+    body.dark .md-gray{
+      color:#9a9a9a;
+    }
+
     .actions{
       display:flex;
       gap:10px;
@@ -107,7 +105,6 @@
       color:inherit;
     }
 
-    /* REPLY BAR */
     .replyBar{
       position:fixed;
       bottom:60px;
@@ -142,7 +139,6 @@
       cursor:pointer;
     }
 
-    /* INPUT */
     .inputbar{
       position:fixed;
       bottom:0;
@@ -169,7 +165,6 @@
       background:#0a84ff;
       color:white;
     }
-
   </style>
 </head>
 
@@ -193,14 +188,12 @@
     <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2"/>
     <path d="M7 6l1 14h8l1-14" stroke="currentColor" stroke-width="2"/>
   </svg>
-
 </div>
 
 <div class="chat" id="chat"></div>
 
 <div class="replyBar" id="replyBar">
   <div class="replyText" id="replyText"></div>
-
   <svg class="closeReply" onclick="clearReply()" viewBox="0 0 24 24">
     <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2"/>
   </svg>
@@ -233,6 +226,28 @@ function save(){
   localStorage.setItem("chat",chat.innerHTML);
 }
 
+/* SAFE TEXT (ANTI EXECUTION) */
+function escapeHTML(t){
+  return t
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+
+/* MARKDOWN GRAY */
+function formatText(t){
+
+  t = escapeHTML(t);
+
+  // ### title -> gray
+  t = t.replace(/### (.*)/g,'<div class="md-gray">$1</div>');
+
+  // **bold -> gray (comme demandé)
+  t = t.replace(/\*\*(.*?)\*\*/g,'<span class="md-gray">$1</span>');
+
+  return t;
+}
+
 /* SCROLL */
 function scroll(){
   chat.scrollTop=chat.scrollHeight;
@@ -241,20 +256,23 @@ function scroll(){
 /* ADD MSG */
 function add(text,type,reply){
 
-  let replyHtml = reply ? `<div class="replyInMsg">${reply}</div>` : "";
+  let replyHtml = reply ? `<div class="md-gray" style="border-left:3px solid #0a84ff;padding-left:6px;margin-bottom:5px">${reply}</div>` : "";
 
   let d=document.createElement("div");
   d.className="msg "+type;
 
   d.innerHTML=`
     ${replyHtml}
-    <div class="msgText">${text}</div>
+    <div class="msgText">${formatText(text)}</div>
 
     <div class="actions">
 
-      <!-- COPY -->
+      <!-- COPY (ANCIEN SVG RESTORED) -->
       <svg class="icon" onclick="copyMsg(this)" viewBox="0 0 24 24" fill="none">
-        <rect x="9" y="9" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
+        <rect x="9" y="9" width="10" height="10" rx="2"
+              stroke="currentColor" stroke-width="2"/>
+        <path d="M5 15V5a2 2 0 0 1 2-2h10"
+              stroke="currentColor" stroke-width="2"/>
       </svg>
 
       <!-- REPLY -->
@@ -291,7 +309,7 @@ function deleteMsg(el){
   }
 }
 
-/* REPLY FIXED */
+/* REPLY */
 function replyMsg(el){
   let msg=el.closest(".msg");
   replyTo=msg.querySelector(".msgText").innerText;
