@@ -10,11 +10,8 @@
       background:#f5f7fb;
       background-size:cover;
       background-position:center;
-      transition:.2s;
       overflow:hidden;
     }
-
-    body.dark{background:#0f0f1a;color:white}
 
     .topbar{
       position:fixed;
@@ -28,11 +25,6 @@
       backdrop-filter:blur(10px);
       border-bottom:1px solid #eee;
       z-index:1000;
-    }
-
-    body.dark .topbar{
-      background:rgba(20,20,30,0.85);
-      border-color:#222;
     }
 
     .btn{
@@ -67,35 +59,32 @@
       font-size:14px;
       word-break:break-word;
       clear:both;
-      animation:fade .15s ease;
-    }
-
-    @keyframes fade{
-      from{opacity:0;transform:translateY(6px)}
-      to{opacity:1}
+      transition:transform .2s ease;
+      position:relative;
     }
 
     .user{background:#0a84ff;color:white;float:right}
     .bot{background:white;float:left;box-shadow:0 2px 10px rgba(0,0,0,.06)}
-    body.dark .bot{background:#1c1c2e}
 
-    /* REPLY PREVIEW BAR */
+    /* ACTION MENU */
+    .actions{
+      font-size:10px;
+      opacity:.6;
+      margin-top:5px;
+      display:flex;
+      gap:8px;
+    }
+
     .replyBar{
       position:fixed;
       bottom:60px;
       left:0;right:0;
       background:rgba(255,255,255,0.95);
-      backdrop-filter:blur(10px);
       padding:8px 10px;
       font-size:12px;
       display:none;
       border-top:1px solid #ddd;
       z-index:999;
-    }
-
-    body.dark .replyBar{
-      background:rgba(20,20,30,0.9);
-      border-color:#222;
     }
 
     .inputbar{
@@ -104,11 +93,10 @@
       left:0;
       right:0;
       display:flex;
-      gap:6px;
       padding:8px;
+      gap:6px;
       background:rgba(255,255,255,0.9);
       backdrop-filter:blur(10px);
-      z-index:1000;
     }
 
     input{
@@ -116,7 +104,6 @@
       padding:12px;
       border-radius:18px;
       border:1px solid #ddd;
-      outline:none;
     }
 
     button{
@@ -141,80 +128,96 @@
 
 <div class="chat" id="chat"></div>
 
-<!-- REPLY PREVIEW -->
 <div class="replyBar" id="replyBar"></div>
 
 <div class="inputbar">
   <input id="input" placeholder="Message..." />
   <button onclick="send()">Send</button>
-
-  <input type="file" id="bgFile" accept="image/*" style="display:none">
 </div>
 
 <script>
 
-var uid="u_"+Math.random().toString(36).slice(2);
 var chat=document.getElementById("chat");
 var replyTo=null;
 
-/* ---------------- LOCAL STORAGE LOAD ---------------- */
-window.onload=()=>{
-
-  let savedChat=localStorage.getItem("chat");
-  if(savedChat) chat.innerHTML=savedChat;
-
-  let bg=localStorage.getItem("bg");
-  if(bg) document.body.style.backgroundImage="url("+bg+")";
-
-  let reply=localStorage.getItem("reply");
-  if(reply){
-    replyTo=reply;
-    showReply(replyTo);
-  }
-
-  scroll();
-};
-
-/* ---------------- SAVE ---------------- */
-function save(){
-  localStorage.setItem("chat",chat.innerHTML);
-  if(replyTo) localStorage.setItem("reply",replyTo);
-}
-
-/* ---------------- SCROLL ---------------- */
+/* SCROLL */
 function scroll(){
   chat.scrollTop=chat.scrollHeight;
 }
 
-/* ---------------- MESSAGE ---------------- */
+/* MESSAGE */
 function add(text,type){
 
   let d=document.createElement("div");
   d.className="msg "+type;
-  d.innerHTML=text;
+
+  d.innerHTML=text+`
+    <div class="actions">
+      <span onclick="copyMsg(this)">copy</span>
+      <span onclick="deleteMsg(this)">del</span>
+      <span onclick="replyMsg(this)">reply</span>
+    </div>
+  `;
+
+  enableSwipe(d);
 
   chat.appendChild(d);
   scroll();
-
-  save();
 }
 
-/* ---------------- REPLY UI ---------------- */
+/* COPY */
+function copyMsg(el){
+  navigator.clipboard.writeText(el.parentElement.parentElement.innerText);
+}
+
+/* DELETE WITH CONFIRM */
+function deleteMsg(el){
+
+  if(confirm("⚠ Voulez-vous vraiment supprimer ce message ?")){
+    el.parentElement.parentElement.remove();
+  }
+}
+
+/* REPLY */
+function replyMsg(el){
+  replyTo=el.parentElement.parentElement.innerText;
+  showReply(replyTo);
+}
+
+/* REPLY BAR */
 function showReply(text){
   let bar=document.getElementById("replyBar");
   bar.style.display="block";
   bar.innerText="Replying to: "+text;
 }
 
-function clearReply(){
-  let bar=document.getElementById("replyBar");
-  bar.style.display="none";
-  bar.innerText="";
-  replyTo=null;
-  localStorage.removeItem("reply");
+/* SWIPE WHATSAPP */
+function enableSwipe(el){
+
+  let startX=0;
+  let moveX=0;
+
+  el.addEventListener("touchstart",e=>{
+    startX=e.touches[0].clientX;
+  });
+
+  el.addEventListener("touchmove",e=>{
+    moveX=e.touches[0].clientX-startX;
+    if(moveX<0){
+      el.style.transform=`translateX(${moveX}px)`;
+    }
+  });
+
+  el.addEventListener("touchend",()=>{
+    if(moveX<-90){
+      replyMsg({parentElement:{parentElement:el}});
+    }
+    el.style.transform="translateX(0)";
+    moveX=0;
+  });
 }
 
-/* ---------------- SEND ---------------- */
+/* SEND */
 async function send(){
 
   let i=document.getElementById("input");
@@ -228,7 +231,7 @@ async function send(){
   try{
 
     let r=await fetch(
-      "https://rest-api-orcin-kappa.vercel.app/api/gemma?uid="+uid+
+      "https://rest-api-orcin-kappa.vercel.app/api/gemma?uid=demo"+
       "&prompt="+encodeURIComponent(t)
     );
 
@@ -238,46 +241,27 @@ async function send(){
       add("🤖 "+d.response,"bot");
     }
 
-    clearReply();
-
   }catch(e){
     add("error","bot");
   }
 }
 
-/* ---------------- BG FROM GALLERY ---------------- */
+/* BG */
 function pickBg(){
-
-  let input=document.getElementById("bgFile");
-
-  input.onchange=()=>{
-
-    let file=input.files[0];
-    let reader=new FileReader();
-
-    reader.onload=()=>{
-
-      document.body.style.backgroundImage="url("+reader.result+")";
-
-      localStorage.setItem("bg",reader.result);
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  input.click();
+  let url=prompt("Image URL background:");
+  if(url){
+    document.body.style.backgroundImage="url("+url+")";
+  }
 }
 
-/* ---------------- MODE ---------------- */
+/* MODE */
 function toggle(){
   document.body.classList.toggle("dark");
 }
 
-/* ---------------- CLEAR ---------------- */
+/* CLEAR */
 function clearAll(){
   chat.innerHTML="";
-  localStorage.removeItem("chat");
-  clearReply();
 }
 
 </script>
