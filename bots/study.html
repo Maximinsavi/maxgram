@@ -11,14 +11,10 @@
       transition:.3s;
     }
 
-    body.dark{
-      background:#0f0f1a;
-      color:white;
-    }
+    body.dark{background:#0f0f1a;color:white}
 
     .topbar{
-      position:fixed;
-      top:0;left:0;right:0;
+      position:fixed;top:0;left:0;right:0;
       background:white;
       padding:10px;
       text-align:center;
@@ -27,26 +23,17 @@
       z-index:10;
     }
 
-    body.dark .topbar,
-    body.dark .inputbar{
-      background:#1a1a2e;
-      border-color:#333;
-    }
-
     .mode,.clear{
-      position:absolute;
-      top:6px;
+      position:absolute;top:6px;
       font-size:11px;
       padding:4px 8px;
       border:none;
       border-radius:6px;
-      cursor:pointer;
     }
 
     .mode{left:8px}
     .clear{right:8px;background:red;color:white}
 
-    /* CHAT STYLE D’AVANT */
     .chat{
       padding:60px 8px 140px;
     }
@@ -69,36 +56,12 @@
       to{opacity:1}
     }
 
-    .user{
-      background:#4a6cf7;
-      color:white;
-      float:right;
-    }
+    .user{background:#4a6cf7;color:white;float:right}
+    .bot{background:white;float:left;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 
-    .bot{
-      background:white;
-      float:left;
-      box-shadow:0 2px 8px rgba(0,0,0,0.06);
-    }
+    body.dark .bot{background:#1c1c2e;color:white}
 
-    body.dark .bot{
-      background:#1c1c2e;
-      color:white;
-    }
-
-    .actions{
-      font-size:10px;
-      opacity:.6;
-      margin-top:4px;
-      display:flex;
-      gap:6px;
-    }
-
-    .typing{
-      font-size:12px;
-      opacity:.7;
-      margin:6px 0;
-    }
+    .actions{font-size:10px;opacity:.6;margin-top:4px}
 
     .inputbar{
       position:fixed;
@@ -126,7 +89,6 @@
       background:#4a6cf7;
       color:white;
       font-size:12px;
-      cursor:pointer;
     }
 
     pre{
@@ -152,26 +114,16 @@
 
 <div class="chat" id="chat"></div>
 
-<div class="typing" id="typing" style="display:none;padding-left:10px;">
-  🤖 bot écrit...
-</div>
-
 <div class="inputbar">
   <input id="input" placeholder="Message..." />
   <button onclick="send()">Send</button>
-  <button onclick="voice()">🎤</button>
   <button onclick="document.getElementById('img').click()">📎</button>
   <input type="file" id="img" onchange="upload()" style="display:none">
 </div>
 
-<audio id="snd1" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
-<audio id="snd2" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
-
 <script>
 var uid="u_"+Math.random().toString(36).slice(2);
 var chat=document.getElementById("chat");
-var typing=document.getElementById("typing");
-var memory=JSON.parse(localStorage.getItem("mem")||"[]");
 
 /* LOAD */
 window.onload=()=>{
@@ -181,19 +133,13 @@ window.onload=()=>{
 /* SAVE */
 function save(){
   localStorage.setItem("chat",chat.innerHTML);
-  localStorage.setItem("mem",JSON.stringify(memory));
-}
-
-/* ESCAPE */
-function esc(t){
-  return t.replace(/&/g,"&amp;")
-          .replace(/</g,"&lt;")
-          .replace(/>/g,"&gt;");
 }
 
 /* FORMAT SAFE */
 function format(t){
-  t=esc(t);
+  t=t.replace(/&/g,"&amp;")
+     .replace(/</g,"&lt;")
+     .replace(/>/g,"&gt;");
 
   t=t.replace(/### (.*)/g,'<span class="gray">$1</span>');
   t=t.replace(/\*\*(.*?)\*\*/g,'<span class="gray">$1</span>');
@@ -205,7 +151,7 @@ function format(t){
   return t;
 }
 
-/* ADD MESSAGE */
+/* ADD */
 function add(t,type){
   var d=document.createElement("div");
   d.className="msg "+type;
@@ -216,13 +162,6 @@ function add(t,type){
       <span onclick="del(this)">del</span>
     </div>
   `;
-
-  d.addEventListener("touchstart",e=>d.x=e.touches[0].clientX);
-  d.addEventListener("touchend",e=>{
-    if(d.x-e.changedTouches[0].clientX>80){
-      if(confirm("delete?")){d.remove();save();}
-    }
-  });
 
   chat.appendChild(d);
   scroll();
@@ -246,67 +185,49 @@ function scroll(){
   window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
 }
 
-/* TYPING */
-function showTyping(){
-  typing.style.display="block";
-}
-function hideTyping(){
-  typing.style.display="none";
-}
-
-/* SEND */
+/* SEND (FIXED API) */
 async function send(){
   let i=document.getElementById("input");
   let t=i.value;
-  if(!t)return;
-
-  document.getElementById("snd1").play();
+  if(!t.trim())return;
 
   add(t,"user");
-  memory.push({role:"user",content:t});
   i.value="";
 
-  showTyping();
-  scroll();
+  try{
+    let r=await fetch(
+      "https://rest-api-orcin-kappa.vercel.app/api/gemma?uid="+uid+
+      "&prompt="+encodeURIComponent(t)
+    );
 
-  let r=await fetch(
-    "https://rest-api-orcin-kappa.vercel.app/api/gemma?uid="+uid,
-    {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({memory})
+    let d=await r.json();
+
+    if(d.status){
+      add("🤖 "+d.response,"bot");
+    }else{
+      add("error","bot");
     }
-  );
 
-  let d=await r.json();
-
-  hideTyping();
-
-  if(d.status){
-    document.getElementById("snd2").play();
-    add("🤖 "+d.response,"bot");
-    memory.push({role:"bot",content:d.response});
-    save();
+  }catch(e){
+    add("error","bot");
   }
 }
 
-/* VOICE */
-function voice(){
-  let r=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
-  r.lang="fr-FR";
-  r.start();
-  r.onresult=e=>{
-    document.getElementById("input").value=e.results[0][0].transcript;
-  };
-}
-
-/* IMAGE */
+/* IMAGE FIX */
 function upload(){
   let f=document.getElementById("img").files[0];
   let fr=new FileReader();
+
   fr.onload=()=>{
-    add("[image] "+fr.result,"user");
+    let d=document.createElement("div");
+    d.className="msg user";
+    d.innerHTML=`<img src="${fr.result}" style="max-width:100%;border-radius:10px;">`;
+
+    chat.appendChild(d);
+    scroll();
+    save();
   };
+
   fr.readAsDataURL(f);
 }
 
@@ -317,7 +238,7 @@ function toggle(){
 
 /* CLEAR */
 function clearAll(){
-  if(confirm("clear all?")){
+  if(confirm("clear?")){
     chat.innerHTML="";
     localStorage.clear();
   }
