@@ -59,14 +59,12 @@
       font-size:14px;
       word-break:break-word;
       clear:both;
-      transition:transform .2s ease;
       position:relative;
     }
 
     .user{background:#0a84ff;color:white;float:right}
     .bot{background:white;float:left;box-shadow:0 2px 10px rgba(0,0,0,.06)}
 
-    /* ACTION MENU */
     .actions{
       font-size:10px;
       opacity:.6;
@@ -104,6 +102,7 @@
       padding:12px;
       border-radius:18px;
       border:1px solid #ddd;
+      outline:none;
     }
 
     button{
@@ -133,6 +132,8 @@
 <div class="inputbar">
   <input id="input" placeholder="Message..." />
   <button onclick="send()">Send</button>
+
+  <input type="file" id="bgFile" accept="image/*" style="display:none">
 </div>
 
 <script>
@@ -140,12 +141,41 @@
 var chat=document.getElementById("chat");
 var replyTo=null;
 
-/* SCROLL */
+/* ================= LOCAL STORAGE LOAD ================= */
+window.onload=()=>{
+
+  let savedChat=localStorage.getItem("chat");
+  if(savedChat) chat.innerHTML=savedChat;
+
+  let bg=localStorage.getItem("bg");
+  if(bg) document.body.style.backgroundImage="url("+bg+")";
+
+  let reply=localStorage.getItem("reply");
+  if(reply){
+    replyTo=reply;
+    showReply(replyTo);
+  }
+
+  scroll();
+};
+
+/* ================= SAVE ================= */
+function save(){
+  localStorage.setItem("chat",chat.innerHTML);
+
+  if(replyTo){
+    localStorage.setItem("reply",replyTo);
+  }else{
+    localStorage.removeItem("reply");
+  }
+}
+
+/* ================= SCROLL ================= */
 function scroll(){
   chat.scrollTop=chat.scrollHeight;
 }
 
-/* MESSAGE */
+/* ================= MESSAGE ================= */
 function add(text,type){
 
   let d=document.createElement("div");
@@ -159,65 +189,49 @@ function add(text,type){
     </div>
   `;
 
-  enableSwipe(d);
-
   chat.appendChild(d);
   scroll();
+  save();
 }
 
-/* COPY */
+/* ================= COPY ================= */
 function copyMsg(el){
   navigator.clipboard.writeText(el.parentElement.parentElement.innerText);
 }
 
-/* DELETE WITH CONFIRM */
+/* ================= DELETE CONFIRM ================= */
 function deleteMsg(el){
 
   if(confirm("⚠ Voulez-vous vraiment supprimer ce message ?")){
     el.parentElement.parentElement.remove();
+    save();
   }
 }
 
-/* REPLY */
+/* ================= REPLY ================= */
 function replyMsg(el){
+
   replyTo=el.parentElement.parentElement.innerText;
-  showReply(replyTo);
+
+  showReplyOnlyText(replyTo); // IMPORTANT FIX
+  save();
 }
 
-/* REPLY BAR */
-function showReply(text){
+/* SHOW ONLY TEXT (NO ACTIONS) */
+function showReplyOnlyText(text){
   let bar=document.getElementById("replyBar");
   bar.style.display="block";
   bar.innerText="Replying to: "+text;
 }
 
-/* SWIPE WHATSAPP */
-function enableSwipe(el){
-
-  let startX=0;
-  let moveX=0;
-
-  el.addEventListener("touchstart",e=>{
-    startX=e.touches[0].clientX;
-  });
-
-  el.addEventListener("touchmove",e=>{
-    moveX=e.touches[0].clientX-startX;
-    if(moveX<0){
-      el.style.transform=`translateX(${moveX}px)`;
-    }
-  });
-
-  el.addEventListener("touchend",()=>{
-    if(moveX<-90){
-      replyMsg({parentElement:{parentElement:el}});
-    }
-    el.style.transform="translateX(0)";
-    moveX=0;
-  });
+/* CLEAR REPLY */
+function clearReply(){
+  replyTo=null;
+  document.getElementById("replyBar").style.display="none";
+  localStorage.removeItem("reply");
 }
 
-/* SEND */
+/* ================= SEND ================= */
 async function send(){
 
   let i=document.getElementById("input");
@@ -241,27 +255,46 @@ async function send(){
       add("🤖 "+d.response,"bot");
     }
 
+    clearReply();
+
   }catch(e){
     add("error","bot");
   }
 }
 
-/* BG */
+/* ================= BG FROM GALLERY ================= */
 function pickBg(){
-  let url=prompt("Image URL background:");
-  if(url){
-    document.body.style.backgroundImage="url("+url+")";
-  }
+
+  let input=document.getElementById("bgFile");
+
+  input.onchange=()=>{
+
+    let file=input.files[0];
+    let reader=new FileReader();
+
+    reader.onload=()=>{
+
+      document.body.style.backgroundImage="url("+reader.result+")";
+
+      localStorage.setItem("bg",reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  input.click();
 }
 
-/* MODE */
+/* ================= MODE ================= */
 function toggle(){
   document.body.classList.toggle("dark");
 }
 
-/* CLEAR */
+/* ================= CLEAR ================= */
 function clearAll(){
   chat.innerHTML="";
+  localStorage.clear();
+  clearReply();
 }
 
 </script>
