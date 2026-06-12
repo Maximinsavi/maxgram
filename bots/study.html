@@ -36,7 +36,6 @@
       font-size:11px;
     }
 
-    .mode{left:8px}
     .bg{right:70px;background:#0a84ff;color:white}
     .clear{right:8px;background:#ff3b30;color:white}
 
@@ -60,6 +59,7 @@
       word-break:break-word;
       clear:both;
       position:relative;
+      transition:transform .15s ease;
     }
 
     .user{background:#0a84ff;color:white;float:right}
@@ -120,7 +120,6 @@
 
 <div class="topbar">
   Magram
-  <button class="btn mode" onclick="toggle()">🌙</button>
   <button class="btn bg" onclick="pickBg()">🖼</button>
   <button class="btn clear" onclick="clearAll()">X</button>
 </div>
@@ -132,7 +131,6 @@
 <div class="inputbar">
   <input id="input" placeholder="Message..." />
   <button onclick="send()">Send</button>
-
   <input type="file" id="bgFile" accept="image/*" style="display:none">
 </div>
 
@@ -141,19 +139,19 @@
 var chat=document.getElementById("chat");
 var replyTo=null;
 
-/* ================= LOCAL STORAGE LOAD ================= */
+/* ================= LOAD ================= */
 window.onload=()=>{
 
-  let savedChat=localStorage.getItem("chat");
-  if(savedChat) chat.innerHTML=savedChat;
+  let savedChat = localStorage.getItem("chat");
+  if(savedChat) chat.innerHTML = savedChat;
 
-  let bg=localStorage.getItem("bg");
-  if(bg) document.body.style.backgroundImage="url("+bg+")";
+  let bg = localStorage.getItem("bg");
+  if(bg) document.body.style.backgroundImage = "url("+bg+")";
 
-  let reply=localStorage.getItem("reply");
+  let reply = localStorage.getItem("reply");
   if(reply){
-    replyTo=reply;
-    showReply(replyTo);
+    replyTo = reply;
+    showReplyOnlyText(reply);
   }
 
   scroll();
@@ -161,18 +159,20 @@ window.onload=()=>{
 
 /* ================= SAVE ================= */
 function save(){
-  localStorage.setItem("chat",chat.innerHTML);
+  localStorage.setItem("chat", chat.innerHTML);
 
   if(replyTo){
-    localStorage.setItem("reply",replyTo);
+    localStorage.setItem("reply", replyTo);
   }else{
     localStorage.removeItem("reply");
   }
 }
 
-/* ================= SCROLL ================= */
+/* ================= SCROLL FIX ================= */
 function scroll(){
-  chat.scrollTop=chat.scrollHeight;
+  setTimeout(()=>{
+    chat.scrollTop = chat.scrollHeight;
+  },50);
 }
 
 /* ================= MESSAGE ================= */
@@ -211,13 +211,13 @@ function deleteMsg(el){
 /* ================= REPLY ================= */
 function replyMsg(el){
 
-  replyTo=el.parentElement.parentElement.innerText;
+  replyTo = el.parentElement.parentElement.innerText;
 
-  showReplyOnlyText(replyTo); // IMPORTANT FIX
+  showReplyOnlyText(replyTo);
   save();
 }
 
-/* SHOW ONLY TEXT (NO ACTIONS) */
+/* ONLY TEXT (NO ACTIONS) */
 function showReplyOnlyText(text){
   let bar=document.getElementById("replyBar");
   bar.style.display="block";
@@ -239,7 +239,6 @@ async function send(){
   if(!t) return;
 
   add(t,"user");
-
   i.value="";
 
   try{
@@ -262,7 +261,7 @@ async function send(){
   }
 }
 
-/* ================= BG FROM GALLERY ================= */
+/* ================= BG GALLERY ================= */
 function pickBg(){
 
   let input=document.getElementById("bgFile");
@@ -283,11 +282,6 @@ function pickBg(){
   };
 
   input.click();
-}
-
-/* ================= MODE ================= */
-function toggle(){
-  document.body.classList.toggle("dark");
 }
 
 /* ================= CLEAR ================= */
