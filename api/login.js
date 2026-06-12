@@ -1,35 +1,41 @@
-import { MongoClient } from "mongodb";
+const { MongoClient } = require("mongodb");
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
     if (req.method !== "POST") {
         return res.status(405).json({ message: "Method not allowed" });
     }
 
     try {
-        var client = await MongoClient.connect(process.env.MONGO_URL);
-        var db = client.db("mydb");
-        var users = db.collection("users");
+        const client = await MongoClient.connect(process.env.MONGO_URL);
+        const db = client.db("mydb");
+        const users = db.collection("users");
 
-        var user = await users.findOne({
+        const user = await users.findOne({
             email: req.body.email,
             password: req.body.password
         });
 
         if (!user) {
-            return res.json({ success: false, message: "Email ou mot de passe incorrect" });
+            return res.json({
+                success: false,
+                message: "Email ou mot de passe incorrect"
+            });
         }
 
-        res.json({
+        return res.json({
             success: true,
             message: "Connexion réussie",
             user: {
-                id: user._id,
                 username: user.username,
                 email: user.email
             }
         });
 
     } catch (error) {
-        res.status(500).json({ success: false, message: "Erreur serveur" });
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Erreur serveur"
+        });
     }
-}
+};
