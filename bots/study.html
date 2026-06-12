@@ -10,7 +10,6 @@
       background:#f5f7fb;
       background-size:cover;
       background-position:center;
-      overflow:hidden;
     }
 
     body.dark{
@@ -18,12 +17,9 @@
       color:white;
     }
 
-    /* HEADER FIXE ULTRA STABLE */
     .topbar{
       position:fixed;
-      top:0;
-      left:0;
-      right:0;
+      top:0;left:0;right:0;
       height:50px;
       display:flex;
       align-items:center;
@@ -31,8 +27,8 @@
       font-weight:600;
       background:rgba(255,255,255,0.85);
       backdrop-filter:blur(10px);
-      border-bottom:1px solid #eee;
       z-index:9999;
+      border-bottom:1px solid #eee;
     }
 
     body.dark .topbar{
@@ -40,41 +36,32 @@
       border-color:#222;
     }
 
-    .btn{
-      position:absolute;
-      top:10px;
-      padding:6px 10px;
-      border:none;
-      border-radius:8px;
-      font-size:11px;
-      cursor:pointer;
-    }
-
-    .bg{right:70px;background:#0a84ff;color:white}
-    .mode{left:8px;background:#111;color:white}
-    body.dark .mode{background:#fff;color:#000}
-    .clear{right:8px;background:#ff3b30;color:white}
-
-    /* CHAT FULL SCREEN (NO BOTTOM BLOCK) */
     .chat{
       position:absolute;
       top:50px;
-      bottom:70px; /* réduit pour enlever blocage */
+      bottom:140px;
       left:0;
       right:0;
       overflow-y:auto;
-      padding:10px;
+      padding:12px;
     }
 
     .msg{
       display:inline-block;
       max-width:78%;
       padding:10px 12px;
-      margin:6px 0;
-      border-radius:18px;
+      margin:8px 0;
+      border-radius:16px;
       font-size:14px;
       word-break:break-word;
       clear:both;
+      position:relative;
+      animation:pop .15s ease;
+    }
+
+    @keyframes pop{
+      from{opacity:0;transform:translateY(8px)}
+      to{opacity:1;transform:translateY(0)}
     }
 
     .user{background:#0a84ff;color:white;float:right}
@@ -85,50 +72,26 @@
       color:white;
     }
 
-    .msgText{
-      white-space:pre-wrap;
+    /* REPLY STYLE PRO */
+    .replyBlock{
+      border-left:3px solid #0a84ff;
+      padding-left:8px;
+      margin-bottom:6px;
+      opacity:.85;
+      font-size:12px;
     }
 
     .actions{
-      font-size:10px;
-      opacity:.6;
-      margin-top:5px;
       display:flex;
-      gap:8px;
+      gap:10px;
+      margin-top:6px;
+      opacity:.6;
     }
 
-    .replyBar{
-      position:fixed;
-      bottom:60px;
-      left:0;right:0;
-      background:rgba(255,255,255,0.95);
-      padding:8px 10px;
-      font-size:12px;
-      display:none;
-      border-top:1px solid #ddd;
-      z-index:999;
-      justify-content:space-between;
-      align-items:center;
-    }
-
-    body.dark .replyBar{
-      background:rgba(20,20,30,0.9);
-      border-color:#222;
-    }
-
-    .replyText{
-      flex:1;
-      opacity:.8;
-      font-size:12px;
-    }
-
-    .replyClose{
-      background:red;
-      color:white;
-      border:none;
-      border-radius:6px;
-      padding:4px 8px;
-      font-size:10px;
+    .icon{
+      width:16px;
+      height:16px;
+      cursor:pointer;
     }
 
     .inputbar{
@@ -164,51 +127,19 @@
 
 <body>
 
-<div class="topbar">
-  Magram
-  <button class="btn mode" onclick="toggleMode()">🌙</button>
-  <button class="btn bg" onclick="pickBg()">🖼</button>
-  <button class="btn clear" onclick="clearAll()">X</button>
-</div>
+<div class="topbar">Magram</div>
 
 <div class="chat" id="chat"></div>
-
-<div class="replyBar" id="replyBar">
-  <div class="replyText" id="replyText"></div>
-  <button class="replyClose" onclick="clearReply()">✖</button>
-</div>
 
 <div class="inputbar">
   <input id="input" placeholder="Message..." />
   <button onclick="send()">Send</button>
 </div>
 
-<input type="file" id="bgFile" accept="image/*" style="display:none">
-
 <script>
 
 var chat=document.getElementById("chat");
 var replyTo=null;
-
-/* ================= LOAD ================= */
-window.onload=()=>{
-
-  let savedChat = localStorage.getItem("chat");
-  if(savedChat) chat.innerHTML = savedChat;
-
-  let bg = localStorage.getItem("bg");
-  if(bg) document.body.style.backgroundImage = "url("+bg+")";
-
-  let mode = localStorage.getItem("mode");
-  if(mode=="dark") document.body.classList.add("dark");
-
-  scroll();
-};
-
-/* ================= SAVE ================= */
-function save(){
-  localStorage.setItem("chat", chat.innerHTML);
-}
 
 /* ================= SCROLL ================= */
 function scroll(){
@@ -216,64 +147,62 @@ function scroll(){
 }
 
 /* ================= MESSAGE ================= */
-function add(text,type){
+function add(text,type,reply){
 
   let d=document.createElement("div");
   d.className="msg "+type;
 
-  d.setAttribute("data-text", text);
+  let replyHtml = reply ? `<div class="replyBlock">${reply}</div>` : "";
 
-  d.innerHTML=`
-    <div class="msgText">${text}</div>
+  d.innerHTML = `
+    ${replyHtml}
+    <div>${text}</div>
 
     <div class="actions">
-      <span onclick="copyMsg(this)">copy</span>
-      <span onclick="deleteMsg(this)">del</span>
-      <span onclick="replyMsg(this)">reply</span>
+
+      <!-- COPY SVG -->
+      <svg class="icon" onclick="copyMsg(this)" viewBox="0 0 24 24" fill="none">
+        <path d="M8 8H18V18H8V8Z" stroke="currentColor" stroke-width="2"/>
+        <path d="M6 16H6C5 16 4 15 4 14V6C4 5 5 4 6 4H14C15 4 16 5 16 6V6" stroke="currentColor" stroke-width="2"/>
+      </svg>
+
+      <!-- REPLY SVG -->
+      <svg class="icon" onclick="replyMsg(this)" viewBox="0 0 24 24" fill="none">
+        <path d="M9 10L4 15L9 20" stroke="currentColor" stroke-width="2"/>
+        <path d="M20 4V11C20 14 18 16 15 16H4" stroke="currentColor" stroke-width="2"/>
+      </svg>
+
+      <!-- DELETE SVG -->
+      <svg class="icon" onclick="deleteMsg(this)" viewBox="0 0 24 24" fill="none">
+        <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
+        <path d="M8 6V4H16V6" stroke="currentColor" stroke-width="2"/>
+        <path d="M6 6L7 20H17L18 6" stroke="currentColor" stroke-width="2"/>
+      </svg>
+
     </div>
   `;
 
   chat.appendChild(d);
   scroll();
-  save();
 }
 
 /* ================= COPY ================= */
 function copyMsg(el){
-  let msg = el.parentElement.parentElement;
-  navigator.clipboard.writeText(msg.getAttribute("data-text"));
+  let msg = el.closest(".msg");
+  navigator.clipboard.writeText(msg.innerText);
 }
 
 /* ================= DELETE ================= */
 function deleteMsg(el){
-
-  if(confirm("Voulez-vous vraiment supprimer ce message ?")){
-    el.parentElement.parentElement.remove();
-    save();
+  if(confirm("Supprimer ce message ?")){
+    el.closest(".msg").remove();
   }
 }
 
 /* ================= REPLY ================= */
 function replyMsg(el){
-
-  let msg = el.parentElement.parentElement;
-
-  replyTo = msg.getAttribute("data-text");
-
-  showReply(replyTo);
-}
-
-/* ================= SHOW REPLY ================= */
-function showReply(text){
-  let bar=document.getElementById("replyBar");
-  document.getElementById("replyText").innerText = text;
-  bar.style.display="flex";
-}
-
-/* ================= CLEAR REPLY ================= */
-function clearReply(){
-  replyTo=null;
-  document.getElementById("replyBar").style.display="none";
+  let msg = el.closest(".msg");
+  replyTo = msg.innerText;
 }
 
 /* ================= SEND ================= */
@@ -283,16 +212,9 @@ async function send(){
   let t=i.value.trim();
   if(!t) return;
 
-  let finalText = t;
-
-  if(replyTo){
-    finalText = "↪️ " + replyTo + "\n\n" + t;
-  }
-
-  add(finalText,"user");
+  add(t,"user", replyTo);
 
   i.value="";
-  clearReply();
 
   try{
 
@@ -304,51 +226,14 @@ async function send(){
     let d=await r.json();
 
     if(d.status){
-      add("🤖 "+d.response,"bot");
+      add(d.response,"bot", null);
     }
 
   }catch(e){
     add("error","bot");
   }
-}
 
-/* ================= BG ================= */
-function pickBg(){
-
-  let input=document.getElementById("bgFile");
-
-  input.onchange=()=>{
-
-    let file=input.files[0];
-    let reader=new FileReader();
-
-    reader.onload=()=>{
-
-      document.body.style.backgroundImage="url("+reader.result+")";
-      localStorage.setItem("bg",reader.result);
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  input.click();
-}
-
-/* ================= MODE ================= */
-function toggleMode(){
-  document.body.classList.toggle("dark");
-
-  localStorage.setItem(
-    "mode",
-    document.body.classList.contains("dark") ? "dark" : "light"
-  );
-}
-
-/* ================= CLEAR ================= */
-function clearAll(){
-  chat.innerHTML="";
-  localStorage.clear();
-  clearReply();
+  replyTo=null;
 }
 
 </script>
