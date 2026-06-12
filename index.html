@@ -1,0 +1,140 @@
+<html>
+<head>
+  <title>Magram - Next Generation Chat</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #1a1a2e, #0f0f1a);
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      height: 100vh;
+      border-collapse: collapse;
+    }
+
+    td {
+      text-align: center;
+      vertical-align: middle;
+      padding: 20px;
+    }
+
+    .card {
+      display: inline-block;
+      padding: 50px 40px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      max-width: 600px;
+    }
+
+    .logo {
+      font-size: 48px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: 15px;
+      opacity: 0.75;
+    }
+
+    .desc {
+      margin-top: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      opacity: 0.85;
+    }
+
+    .section {
+      margin-top: 25px;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    a.btn {
+      display: block;
+      margin: 12px auto;
+      padding: 12px 22px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+      width: fit-content;
+      min-width: 220px;
+    }
+
+    a.btn:hover {
+      transform: scale(1.05);
+    }
+
+    .bot {
+      background: linear-gradient(135deg, #4a6cf7, #6a11cb);
+      color: white;
+    }
+
+    .login {
+      background: white;
+      color: black;
+    }
+
+    .register {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 11px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body>
+
+<table>
+  <tr>
+    <td>
+
+      <div class="card">
+
+        <div class="logo">Magram</div>
+        <div class="subtitle">The future of intelligent chat communication</div>
+
+        <div class="desc">
+          Magram is a next-generation messaging platform designed to connect people,
+          AI bots, and communities in one unified experience.
+          Fast, secure, and built for the modern web.
+        </div>
+
+        <div class="section">
+          ✔ Instant messaging system<br>
+          ✔ Integrated AI Chat Bot<br>
+          ✔ Secure authentication system<br>
+          ✔ Modern and lightweight interface
+        </div>
+
+        <!-- LINKS -->
+        <a class="btn bot" href="/api/bot.html">Chat bot</a>
+        <a class="btn login" href="/login.html">Connexion</a>
+        <a class="btn register" href="/register.html">Enregistrer</a>
+
+        <div class="footer">
+          Secure • Scalable • Built for the future
+        </div>
+
+      </div>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
