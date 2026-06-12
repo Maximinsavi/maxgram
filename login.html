@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <form id="loginForm">
+        <h2>Connexion</h2>
+
+        <input type="email" id="email" placeholder="Email" required>
+
+        <input type="password" id="password" placeholder="Mot de passe" required>
+
+        <button type="submit">Se connecter</button>
+
+        <p id="message"></p>
+    </form>
+
+    <script>
+        var form = document.getElementById("loginForm");
+        var message = document.getElementById("message");
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email.value,
+                    password: password.value
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                message.innerText = data.message;
+
+                if (data.success) {
+                    message.style.color = "green";
+
+                    // redirection après login réussi
+                    setTimeout(() => {
+                        window.location.href = "/";
+                    }, 1000);
+                } else {
+                    message.style.color = "red";
+                }
+            })
+            .catch(() => {
+                message.innerText = "Erreur serveur";
+                message.style.color = "red";
+            });
+        });
+    </script>
+
+</body>
+</html>
