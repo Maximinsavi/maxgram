@@ -10,25 +10,48 @@
       font-family: Arial, sans-serif;
       background: #f5f7fb;
       color: #1a1a1a;
+      transition: 0.3s;
     }
 
-    /* TOP BAR */
+    body.dark {
+      background: #0f0f1a;
+      color: white;
+    }
+
     .topbar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       background: white;
-      padding: 14px;
+      padding: 12px;
       text-align: center;
       font-weight: bold;
       border-bottom: 1px solid #e8e8e8;
       z-index: 10;
     }
 
-    /* CHAT AREA */
+    body.dark .topbar,
+    body.dark .inputbar {
+      background: #1a1a2e;
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .topbtn {
+      position: absolute;
+      top: 10px;
+      font-size: 12px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .mode { left: 10px; }
+    .clear { right: 10px; background: #ff4d4d; color: white; }
+
     .container {
-      padding: 80px 15px 120px;
+      padding: 70px 15px 120px;
     }
 
     .chat {
@@ -37,11 +60,11 @@
     }
 
     .msg {
-      padding: 12px 14px;
+      padding: 12px;
       border-radius: 14px;
       margin-bottom: 10px;
       font-size: 14px;
-      line-height: 1.4;
+      position: relative;
       word-wrap: break-word;
     }
 
@@ -60,7 +83,18 @@
       max-width: 80%;
     }
 
-    /* INPUT BAR */
+    body.dark .bot {
+      background: #1c1c2e;
+      color: white;
+    }
+
+    .actions {
+      margin-top: 5px;
+      font-size: 11px;
+      opacity: 0.7;
+      cursor: pointer;
+    }
+
     .inputbar {
       position: fixed;
       bottom: 0;
@@ -78,7 +112,6 @@
       border: 1px solid #ddd;
       border-radius: 12px;
       outline: none;
-      font-size: 14px;
     }
 
     button {
@@ -91,13 +124,16 @@
       font-weight: bold;
       cursor: pointer;
     }
-
   </style>
 </head>
 
 <body>
 
-<div class="topbar">🤖 Magram Bot</div>
+<div class="topbar">
+  🤖 Magram Bot
+  <button class="topbtn mode" onclick="toggleMode()">🌙</button>
+  <button class="topbtn clear" onclick="clearChat()">Clear</button>
+</div>
 
 <div class="container">
   <div class="chat" id="chat"></div>
@@ -110,14 +146,17 @@
 
 <script>
 var uid = "user_" + Math.floor(Math.random() * 999999);
-
 var chat = document.getElementById("chat");
 
-/* LOAD FROM LOCALSTORAGE */
+/* LOAD ALL DATA */
 window.onload = function () {
-  var saved = localStorage.getItem("magram_chat");
-  if (saved) {
-    chat.innerHTML = saved;
+  var savedChat = localStorage.getItem("magram_chat");
+  var savedMode = localStorage.getItem("magram_mode");
+
+  if (savedChat) chat.innerHTML = savedChat;
+
+  if (savedMode === "dark") {
+    document.body.classList.add("dark");
   }
 };
 
@@ -126,16 +165,58 @@ function saveChat() {
   localStorage.setItem("magram_chat", chat.innerHTML);
 }
 
+/* SAVE MODE */
+function saveMode() {
+  localStorage.setItem("magram_mode",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+}
+
 /* ADD MESSAGE */
 function addMessage(text, type) {
   var div = document.createElement("div");
   div.className = "msg " + type;
-  div.innerText = text;
+
+  div.innerHTML = `
+    <div>${text}</div>
+    <div class="actions">
+      <span onclick="copyText(this)">📋 copier</span> |
+      <span onclick="deleteMsg(this)">❌ supprimer</span>
+    </div>
+  `;
+
   chat.appendChild(div);
-
   saveChat();
+}
 
-  window.scrollTo(0, document.body.scrollHeight);
+/* COPY */
+function copyText(el) {
+  var text = el.parentElement.parentElement.querySelector("div").innerText;
+  navigator.clipboard.writeText(text);
+}
+
+/* DELETE WITH CONFIRM */
+function deleteMsg(el) {
+  var ok = confirm("Supprimer ce message ?");
+  if (!ok) return;
+
+  el.parentElement.parentElement.remove();
+  saveChat();
+}
+
+/* CLEAR CHAT WITH CONFIRM */
+function clearChat() {
+  var ok = confirm("Supprimer tout le chat ?");
+  if (!ok) return;
+
+  chat.innerHTML = "";
+  localStorage.removeItem("magram_chat");
+}
+
+/* TOGGLE MODE */
+function toggleMode() {
+  document.body.classList.toggle("dark");
+  saveMode();
 }
 
 /* SEND MESSAGE */
