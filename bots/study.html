@@ -13,6 +13,11 @@
       overflow:hidden;
     }
 
+    body.dark{
+      background:#0f0f1a;
+      color:white;
+    }
+
     .topbar{
       position:fixed;
       top:0;left:0;right:0;
@@ -27,6 +32,11 @@
       z-index:1000;
     }
 
+    body.dark .topbar{
+      background:rgba(20,20,30,0.85);
+      border-color:#222;
+    }
+
     .btn{
       position:absolute;
       top:10px;
@@ -34,15 +44,18 @@
       border:none;
       border-radius:8px;
       font-size:11px;
+      cursor:pointer;
     }
 
     .bg{right:70px;background:#0a84ff;color:white}
+    .mode{left:8px;background:#111;color:white}
+    body.dark .mode{background:#fff;color:#000}
     .clear{right:8px;background:#ff3b30;color:white}
 
     .chat{
       position:absolute;
       top:50px;
-      bottom:130px;
+      bottom:140px;
       left:0;
       right:0;
       overflow-y:auto;
@@ -58,17 +71,23 @@
       font-size:14px;
       word-break:break-word;
       clear:both;
-      position:relative;
-      transition:transform .15s ease;
     }
 
     .user{background:#0a84ff;color:white;float:right}
     .bot{background:white;float:left;box-shadow:0 2px 10px rgba(0,0,0,.06)}
 
+    body.dark .bot{
+      background:#1c1c2e;
+      color:white;
+    }
+
+    .msgText{
+      margin-bottom:4px;
+    }
+
     .actions{
       font-size:10px;
       opacity:.6;
-      margin-top:5px;
       display:flex;
       gap:8px;
     }
@@ -83,6 +102,28 @@
       display:none;
       border-top:1px solid #ddd;
       z-index:999;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    body.dark .replyBar{
+      background:rgba(20,20,30,0.9);
+      border-color:#222;
+    }
+
+    .replyText{
+      flex:1;
+      opacity:.8;
+      font-size:12px;
+    }
+
+    .replyClose{
+      background:red;
+      color:white;
+      border:none;
+      border-radius:6px;
+      padding:4px 8px;
+      font-size:10px;
     }
 
     .inputbar{
@@ -120,19 +161,24 @@
 
 <div class="topbar">
   Magram
+  <button class="btn mode" onclick="toggleMode()">🌙</button>
   <button class="btn bg" onclick="pickBg()">🖼</button>
   <button class="btn clear" onclick="clearAll()">X</button>
 </div>
 
 <div class="chat" id="chat"></div>
 
-<div class="replyBar" id="replyBar"></div>
+<div class="replyBar" id="replyBar">
+  <div class="replyText" id="replyText"></div>
+  <button class="replyClose" onclick="clearReply()">✖</button>
+</div>
 
 <div class="inputbar">
   <input id="input" placeholder="Message..." />
   <button onclick="send()">Send</button>
-  <input type="file" id="bgFile" accept="image/*" style="display:none">
 </div>
+
+<input type="file" id="bgFile" accept="image/*" style="display:none">
 
 <script>
 
@@ -148,10 +194,13 @@ window.onload=()=>{
   let bg = localStorage.getItem("bg");
   if(bg) document.body.style.backgroundImage = "url("+bg+")";
 
+  let mode = localStorage.getItem("mode");
+  if(mode=="dark") document.body.classList.add("dark");
+
   let reply = localStorage.getItem("reply");
   if(reply){
     replyTo = reply;
-    showReplyOnlyText(reply);
+    showReply(replyTo);
   }
 
   scroll();
@@ -168,7 +217,7 @@ function save(){
   }
 }
 
-/* ================= SCROLL FIX ================= */
+/* ================= SCROLL ================= */
 function scroll(){
   setTimeout(()=>{
     chat.scrollTop = chat.scrollHeight;
@@ -181,7 +230,11 @@ function add(text,type){
   let d=document.createElement("div");
   d.className="msg "+type;
 
-  d.innerHTML=text+`
+  d.setAttribute("data-text", text);
+
+  d.innerHTML=`
+    <div class="msgText">${text}</div>
+
     <div class="actions">
       <span onclick="copyMsg(this)">copy</span>
       <span onclick="deleteMsg(this)">del</span>
@@ -196,13 +249,14 @@ function add(text,type){
 
 /* ================= COPY ================= */
 function copyMsg(el){
-  navigator.clipboard.writeText(el.parentElement.parentElement.innerText);
+  let msg = el.parentElement.parentElement;
+  navigator.clipboard.writeText(msg.getAttribute("data-text"));
 }
 
-/* ================= DELETE CONFIRM ================= */
+/* ================= DELETE ================= */
 function deleteMsg(el){
 
-  if(confirm("⚠ Voulez-vous vraiment supprimer ce message ?")){
+  if(confirm("Voulez-vous vraiment supprimer ce message ?")){
     el.parentElement.parentElement.remove();
     save();
   }
@@ -211,20 +265,22 @@ function deleteMsg(el){
 /* ================= REPLY ================= */
 function replyMsg(el){
 
-  replyTo = el.parentElement.parentElement.innerText;
+  let msg = el.parentElement.parentElement;
 
-  showReplyOnlyText(replyTo);
+  replyTo = msg.getAttribute("data-text");
+
+  showReply(replyTo);
   save();
 }
 
-/* ONLY TEXT (NO ACTIONS) */
-function showReplyOnlyText(text){
+/* ================= REPLY UI ================= */
+function showReply(text){
   let bar=document.getElementById("replyBar");
-  bar.style.display="block";
-  bar.innerText="Replying to: "+text;
+  document.getElementById("replyText").innerText = text;
+  bar.style.display="flex";
 }
 
-/* CLEAR REPLY */
+/* ================= CLEAR REPLY ================= */
 function clearReply(){
   replyTo=null;
   document.getElementById("replyBar").style.display="none";
@@ -261,7 +317,7 @@ async function send(){
   }
 }
 
-/* ================= BG GALLERY ================= */
+/* ================= BG ================= */
 function pickBg(){
 
   let input=document.getElementById("bgFile");
@@ -274,7 +330,6 @@ function pickBg(){
     reader.onload=()=>{
 
       document.body.style.backgroundImage="url("+reader.result+")";
-
       localStorage.setItem("bg",reader.result);
     };
 
@@ -282,6 +337,16 @@ function pickBg(){
   };
 
   input.click();
+}
+
+/* ================= MODE ================= */
+function toggleMode(){
+  document.body.classList.toggle("dark");
+
+  localStorage.setItem(
+    "mode",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
 }
 
 /* ================= CLEAR ================= */
