@@ -10,6 +10,7 @@
       background:#f5f7fb;
       background-size:cover;
       background-position:center;
+      overflow:hidden;
     }
 
     body.dark{
@@ -17,9 +18,12 @@
       color:white;
     }
 
+    /* HEADER FIXE ULTRA STABLE */
     .topbar{
       position:fixed;
-      top:0;left:0;right:0;
+      top:0;
+      left:0;
+      right:0;
       height:50px;
       display:flex;
       align-items:center;
@@ -28,7 +32,7 @@
       background:rgba(255,255,255,0.85);
       backdrop-filter:blur(10px);
       border-bottom:1px solid #eee;
-      z-index:1000;
+      z-index:9999;
     }
 
     body.dark .topbar{
@@ -51,10 +55,11 @@
     body.dark .mode{background:#fff;color:#000}
     .clear{right:8px;background:#ff3b30;color:white}
 
+    /* CHAT FULL SCREEN (NO BOTTOM BLOCK) */
     .chat{
       position:absolute;
       top:50px;
-      bottom:140px;
+      bottom:70px; /* réduit pour enlever blocage */
       left:0;
       right:0;
       overflow-y:auto;
@@ -205,12 +210,12 @@ function save(){
   localStorage.setItem("chat", chat.innerHTML);
 }
 
-/* ================= SCROLL (FREE) ================= */
+/* ================= SCROLL ================= */
 function scroll(){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* ================= ADD MESSAGE ================= */
+/* ================= MESSAGE ================= */
 function add(text,type){
 
   let d=document.createElement("div");
@@ -287,8 +292,7 @@ async function send(){
   add(finalText,"user");
 
   i.value="";
-
-  clearReply(); // IMPORTANT: disparaît direct
+  clearReply();
 
   try{
 
