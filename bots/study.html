@@ -1,89 +1,328 @@
 <html>
 <head>
-  <title>Magram</title>
+  <title>Magram Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0f0f1a;
-      color: white;
+    body{
+      margin:0;
+      font-family:Arial;
+      background:#f5f7fb;
+      transition:.3s;
     }
 
-    .hero {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
+    body.dark{
+      background:#0f0f1a;
+      color:white;
     }
 
-    .hero h1 {
-      font-size: 70px;
-      margin: 0;
-      letter-spacing: 2px;
+    .topbar{
+      position:fixed;
+      top:0;left:0;right:0;
+      background:white;
+      padding:10px;
+      text-align:center;
+      font-weight:bold;
+      border-bottom:1px solid #ddd;
+      z-index:10;
     }
 
-    .hero p {
-      font-size: 20px;
-      opacity: 0.8;
+    body.dark .topbar,
+    body.dark .inputbar{
+      background:#1a1a2e;
+      border-color:#333;
     }
 
-    .btn {
-      margin-top: 20px;
-      padding: 15px 30px;
-      background: white;
-      color: black;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
+    .mode,.clear{
+      position:absolute;
+      top:6px;
+      font-size:11px;
+      padding:4px 8px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
     }
 
-    .btn:hover {
-      transform: scale(1.1);
+    .mode{left:8px}
+    .clear{right:8px;background:red;color:white}
+
+    /* CHAT STYLE D’AVANT */
+    .chat{
+      padding:60px 8px 140px;
     }
 
-    .section {
-      padding: 80px 20px;
-      text-align: center;
+    .msg{
+      display:inline-block;
+      max-width:75%;
+      padding:9px 11px;
+      margin:6px 0;
+      border-radius:14px;
+      font-size:13px;
+      line-height:1.4;
+      word-break:break-word;
+      animation:pop .2s ease;
+      clear:both;
     }
 
-    .cards {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
+    @keyframes pop{
+      from{opacity:0;transform:translateY(6px)}
+      to{opacity:1}
     }
 
-    .card {
-      background: #1c1c2e;
-      padding: 20px;
-      border-radius: 15px;
-      width: 250px;
+    .user{
+      background:#4a6cf7;
+      color:white;
+      float:right;
     }
+
+    .bot{
+      background:white;
+      float:left;
+      box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    body.dark .bot{
+      background:#1c1c2e;
+      color:white;
+    }
+
+    .actions{
+      font-size:10px;
+      opacity:.6;
+      margin-top:4px;
+      display:flex;
+      gap:6px;
+    }
+
+    .typing{
+      font-size:12px;
+      opacity:.7;
+      margin:6px 0;
+    }
+
+    .inputbar{
+      position:fixed;
+      bottom:0;left:0;right:0;
+      background:white;
+      display:flex;
+      padding:6px;
+      border-top:1px solid #ddd;
+      gap:5px;
+    }
+
+    input{
+      flex:1;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid #ddd;
+      font-size:13px;
+      outline:none;
+    }
+
+    button{
+      padding:10px;
+      border:none;
+      border-radius:8px;
+      background:#4a6cf7;
+      color:white;
+      font-size:12px;
+      cursor:pointer;
+    }
+
+    pre{
+      background:#f3f4f6;
+      padding:6px;
+      border-radius:6px;
+      font-size:12px;
+      overflow:auto;
+      margin:4px 0;
+    }
+
+    .gray{color:#888;font-weight:600}
   </style>
 </head>
 
 <body>
 
-  <div class="hero">
-    <h1>Magram</h1>
-    <p>Partage. Inspire. Connecte.</p>
-    <button class="btn">Commencer</button>
-  </div>
+<div class="topbar">
+  Magram Bot
+  <button class="mode" onclick="toggle()">🌙</button>
+  <button class="clear" onclick="clearAll()">X</button>
+</div>
 
-  <div class="section">
-    <h2>Pourquoi Magram ?</h2>
+<div class="chat" id="chat"></div>
 
-    <div class="cards">
-      <div class="card">🔥 Ultra rapide</div>
-      <div class="card">📸 Feed intelligent</div>
-      <div class="card">🌍 Communauté mondiale</div>
+<div class="typing" id="typing" style="display:none;padding-left:10px;">
+  🤖 bot écrit...
+</div>
+
+<div class="inputbar">
+  <input id="input" placeholder="Message..." />
+  <button onclick="send()">Send</button>
+  <button onclick="voice()">🎤</button>
+  <button onclick="document.getElementById('img').click()">📎</button>
+  <input type="file" id="img" onchange="upload()" style="display:none">
+</div>
+
+<audio id="snd1" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
+<audio id="snd2" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+
+<script>
+var uid="u_"+Math.random().toString(36).slice(2);
+var chat=document.getElementById("chat");
+var typing=document.getElementById("typing");
+var memory=JSON.parse(localStorage.getItem("mem")||"[]");
+
+/* LOAD */
+window.onload=()=>{
+  chat.innerHTML=localStorage.getItem("chat")||"";
+};
+
+/* SAVE */
+function save(){
+  localStorage.setItem("chat",chat.innerHTML);
+  localStorage.setItem("mem",JSON.stringify(memory));
+}
+
+/* ESCAPE */
+function esc(t){
+  return t.replace(/&/g,"&amp;")
+          .replace(/</g,"&lt;")
+          .replace(/>/g,"&gt;");
+}
+
+/* FORMAT SAFE */
+function format(t){
+  t=esc(t);
+
+  t=t.replace(/### (.*)/g,'<span class="gray">$1</span>');
+  t=t.replace(/\*\*(.*?)\*\*/g,'<span class="gray">$1</span>');
+
+  t=t.replace(/```([\s\S]*?)```/g,(a,b)=>{
+    return "<pre>"+b+"</pre>";
+  });
+
+  return t;
+}
+
+/* ADD MESSAGE */
+function add(t,type){
+  var d=document.createElement("div");
+  d.className="msg "+type;
+
+  d.innerHTML=format(t)+`
+    <div class="actions">
+      <span onclick="copy(this)">copy</span>
+      <span onclick="del(this)">del</span>
     </div>
-  </div>
+  `;
+
+  d.addEventListener("touchstart",e=>d.x=e.touches[0].clientX);
+  d.addEventListener("touchend",e=>{
+    if(d.x-e.changedTouches[0].clientX>80){
+      if(confirm("delete?")){d.remove();save();}
+    }
+  });
+
+  chat.appendChild(d);
+  scroll();
+  save();
+}
+
+/* COPY */
+function copy(e){
+  navigator.clipboard.writeText(e.parentElement.parentElement.innerText);
+}
+
+/* DELETE */
+function del(e){
+  if(!confirm("delete?"))return;
+  e.parentElement.parentElement.remove();
+  save();
+}
+
+/* SCROLL */
+function scroll(){
+  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+}
+
+/* TYPING */
+function showTyping(){
+  typing.style.display="block";
+}
+function hideTyping(){
+  typing.style.display="none";
+}
+
+/* SEND */
+async function send(){
+  let i=document.getElementById("input");
+  let t=i.value;
+  if(!t)return;
+
+  document.getElementById("snd1").play();
+
+  add(t,"user");
+  memory.push({role:"user",content:t});
+  i.value="";
+
+  showTyping();
+  scroll();
+
+  let r=await fetch(
+    "https://rest-api-orcin-kappa.vercel.app/api/gemma?uid="+uid,
+    {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({memory})
+    }
+  );
+
+  let d=await r.json();
+
+  hideTyping();
+
+  if(d.status){
+    document.getElementById("snd2").play();
+    add("🤖 "+d.response,"bot");
+    memory.push({role:"bot",content:d.response});
+    save();
+  }
+}
+
+/* VOICE */
+function voice(){
+  let r=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+  r.lang="fr-FR";
+  r.start();
+  r.onresult=e=>{
+    document.getElementById("input").value=e.results[0][0].transcript;
+  };
+}
+
+/* IMAGE */
+function upload(){
+  let f=document.getElementById("img").files[0];
+  let fr=new FileReader();
+  fr.onload=()=>{
+    add("[image] "+fr.result,"user");
+  };
+  fr.readAsDataURL(f);
+}
+
+/* MODE */
+function toggle(){
+  document.body.classList.toggle("dark");
+}
+
+/* CLEAR */
+function clearAll(){
+  if(confirm("clear all?")){
+    chat.innerHTML="";
+    localStorage.clear();
+  }
+}
+</script>
 
 </body>
 </html>
