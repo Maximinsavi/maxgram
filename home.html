@@ -1,152 +1,153 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <div id="app-header">
 
 <style>
 
-/* FORCE BASE SCALE */
 html {
     font-size: 18px;
 }
 
-/* RESET GLOBAL */
 body {
     margin:0;
-    padding:0;
     font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+    background:#f5f6f8;
 }
 
 /* HEADER FIXED */
 #app-header {
+
     position:fixed;
     top:0;
     left:0;
+
     width:100%;
-    height:4.2rem;
+    height:4.6rem;
+
     background:white;
+
     border-bottom:1px solid #e5e5e5;
+
+    display:flex;
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 0.8rem;
+
     z-index:9999;
-}
 
-/* TABLE FULL */
-#app-header table {
-    width:100%;
-    height:4.2rem;
-    border-collapse:collapse;
-}
-
-/* CELLS */
-#app-header td {
-    text-align:center;
-    vertical-align:middle;
 }
 
 /* LOGO */
 #app-header .logo {
-    font-size:1.3rem;
+
+    font-size:1.35rem;
     font-weight:800;
     color:#1877f2;
+
 }
 
-/* CLICK ZONE = RESPONSIVE */
-#app-header .icon {
-    width:100%;
-    height:3.2rem;
+/* NAV AREA */
+#app-header .nav {
+
+    display:flex;
+    justify-content:space-between;
+
+    width:70%;
+
+}
+
+/* BUTTONS */
+#app-header a {
+
+    width:2.8rem;
+    height:2.8rem;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
+    border-radius:0.8rem;
+
     text-decoration:none;
+
 }
 
-/* ICON SIZE BASED ON EM (IMPORTANT FIX) */
-#app-header svg {
-    width:1.6rem;
-    height:1.6rem;
-    stroke:#1c1e21;
-}
-
-#app-header .icon:active {
+/* ACTIVE TOUCH EFFECT */
+#app-header a:active {
     background:#f0f2f5;
+}
+
+/* ICON SIZE FACEBOOK REAL */
+#app-header svg {
+
+    width:1.7rem;
+    height:1.7rem;
+
+    stroke:#1c1e21;
+
 }
 
 </style>
 
 
 
-<table>
+<!-- HEADER CONTENT -->
 
-<tr>
-
-<td width="20%">
-<div class="logo">MaxGram</div>
-</td>
+<div class="logo">
+MaxGram
+</div>
 
 
 
-<td width="16%">
-<a class="icon" href="/home.html">
+<div class="nav">
 
+<!-- HOME -->
+<a href="/m/home.html">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M3 10.5L12 3l9 7.5V21H3V10.5Z"
-stroke-width="2"/>
+<path d="M3 10L12 3L21 10V21H3Z" stroke-width="2"/>
 </svg>
-
 </a>
-</td>
 
 
 
-<td width="16%">
-<a class="icon" href="/m/search.html">
-
+<!-- SEARCH -->
+<a href="/m/search.html">
 <svg viewBox="0 0 24 24" fill="none">
 <circle cx="11" cy="11" r="7" stroke-width="2"/>
 <path d="M20 20L16 16" stroke-width="2"/>
 </svg>
-
 </a>
-</td>
 
 
 
-<td width="16%">
-<a class="icon" href="/m/messages.html">
-
+<!-- MESSAGES -->
+<a href="/m/messages.html">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M21 11.5C21 16 17 19 12 19H3V6C3 4 5 3 7 3H17C19 3 21 4 21 6V11.5Z"
-stroke-width="2"/>
+<path d="M21 11C21 16 17 19 12 19H3V6H21Z" stroke-width="2"/>
 </svg>
-
 </a>
-</td>
 
 
 
-<td width="16%">
-<a class="icon" href="/m/notifications.html">
-
+<!-- NOTIFICATIONS -->
+<a href="/m/notifications.html">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M18 9C18 5 15 3 12 3C9 3 6 5 6 9C6 15 4 16 4 18H20C20 16 18 15 18 9Z"
-stroke-width="2"/>
+<path d="M18 8C18 4 15 3 12 3C9 3 6 4 6 8C6 15 4 16 4 18H20C20 16 18 15 18 8Z" stroke-width="2"/>
 </svg>
-
 </a>
-</td>
 
 
 
-<td width="16%">
-<a class="icon" href="/m/menu.html">
-
+<!-- MENU -->
+<a href="/m/menu.html">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M4 7H20M4 12H20M4 17H20"
-stroke-width="2"
-stroke-linecap="round"/>
+<path d="M4 7H20M4 12H20M4 17H20" stroke-width="2"/>
 </svg>
-
 </a>
-</td>
 
-</tr>
-
-</table>
+</div>
 
 </div>
