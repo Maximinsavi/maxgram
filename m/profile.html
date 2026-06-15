@@ -1,284 +1,565 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+
 <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
 
+
 <script>
+
 Parse.initialize(
-    "BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc",
-    "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV"
+"BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc",
+"88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV"
 );
 
-Parse.serverURL = "https://parseapi.back4app.com";
+
+Parse.serverURL =
+"https://parseapi.back4app.com";
+
+
 </script>
+
 
 
 <div id="profile-page">
 
+
 <style>
 
+
 body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-    background:#fafafa;
+
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:white;
+
 }
 
-#profile-header{
-    height:50px;
-    background:white;
-    border-bottom:1px solid #ddd;
-    display:flex;
-    align-items:center;
-    padding:0 10px;
+
+
+#header{
+
+height:50px;
+display:flex;
+align-items:center;
+border-bottom:1px solid #ddd;
+padding:0 15px;
+
 }
 
-#back-btn{
-    width:40px;
-    height:40px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:10px;
-    cursor:pointer;
+
+
+#back{
+
+font-size:25px;
+cursor:pointer;
+
 }
 
-#back-btn:active{
-    background:#f0f2f5;
-}
+
 
 #title{
-    flex:1;
-    text-align:center;
-    font-weight:600;
-    margin-right:40px;
+
+flex:1;
+text-align:center;
+font-weight:700;
+
 }
 
-#profile-box{
-    background:white;
-    padding:20px;
-    text-align:center;
+
+
+#profile{
+
+padding:20px;
+
 }
 
-#profile-avatar{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    margin:auto;
-    overflow:hidden;
-    border:2px solid #eee;
-    cursor:pointer;
+
+
+.top{
+
+display:flex;
+align-items:center;
+
 }
 
-#profile-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+
+
+#avatarBox{
+
+width:95px;
+height:95px;
+border-radius:50%;
+overflow:hidden;
+border:1px solid #ddd;
+
 }
 
-input, textarea{
-    width:90%;
-    margin-top:10px;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #ddd;
-    font-size:14px;
+
+
+#avatar{
+
+width:100%;
+height:100%;
+object-fit:cover;
+
 }
+
+
+
+.stats{
+
+flex:1;
+display:flex;
+justify-content:space-around;
+text-align:center;
+
+}
+
+
+
+.stats b{
+
+display:block;
+font-size:20px;
+
+}
+
+
+
+
+#username{
+
+font-size:20px;
+font-weight:bold;
+border:none;
+outline:none;
+margin-top:20px;
+width:100%;
+
+}
+
+
+
+#bio{
+
+width:100%;
+height:60px;
+border:none;
+resize:none;
+outline:none;
+
+}
+
+
+
+.buttons{
+
+display:flex;
+gap:10px;
+
+}
+
+
 
 button{
-    margin-top:10px;
-    padding:10px 14px;
-    border:none;
-    border-radius:10px;
-    background:#1877f2;
-    color:white;
-    cursor:pointer;
+
+flex:1;
+padding:10px;
+border-radius:8px;
+border:1px solid #ddd;
+background:white;
+font-weight:bold;
+
 }
 
-button:active{
-    transform:scale(.98);
+
+
+.primary{
+
+background:#1877f2;
+color:white;
+
 }
+
+
+
+#grid{
+
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:3px;
+margin-top:20px;
+
+}
+
+
+
+.post{
+
+height:120px;
+background:#eee;
+
+}
+
+
+
+.post img{
+
+width:100%;
+height:100%;
+object-fit:cover;
+
+}
+
 
 </style>
 
 
-<div id="profile-header">
 
-<div id="back-btn" onclick="history.back()">
 
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-<path d="M15 18l-6-6 6-6"
-stroke="black"
-stroke-width="2"/>
-</svg>
 
-</div>
+<div id="header">
 
-<div id="title">Profil</div>
 
+<div id="back" onclick="history.back()">
+‹
 </div>
 
 
-<div id="profile-box">
+<div id="title">
+Profil
+</div>
 
 
-<div id="profile-avatar"
-onclick="document.getElementById('fileInput').click()">
+</div>
+
+
+
+
+
+
+<div id="profile">
+
+
+
+<div class="top">
+
+
+
+<div id="avatarBox"
+onclick="document.getElementById('file').click()">
+
+
 
 <img id="avatar">
 
+
+
 </div>
 
 
-<input 
+
+
+
+<div class="stats">
+
+
+
+<div>
+
+<b id="postsCount">
+0
+</b>
+
+Posts
+
+</div>
+
+
+
+
+<div>
+
+<b id="followers">
+0
+</b>
+
+Followers
+
+</div>
+
+
+
+
+<div>
+
+<b id="following">
+0
+</b>
+
+Following
+
+</div>
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<input
 type="file"
-id="fileInput"
-style="display:none"
-accept="image/*">
+id="file"
+accept="image/*"
+style="display:none">
 
 
-<input id="username" placeholder="Username">
 
 
-<textarea 
+
+<input
+id="username"
+placeholder="Nom utilisateur">
+
+
+
+
+
+<textarea
 id="bio"
 placeholder="Bio"></textarea>
 
 
-<button onclick="saveProfile()">
-Enregistrer
+
+
+
+<div class="buttons">
+
+
+<button class="primary"
+onclick="saveProfile()">
+
+Modifier
+
+</button>
+
+
+
+<button>
+
+Partager
+
 </button>
 
 
 </div>
 
 
+
+
+
+
+
+<div id="grid">
+
 </div>
+
+
+
+
+</div>
+
+</div>
+
+
+
+
 
 
 <script>
 
-var currentUser = null;
+
+
+var currentUser=null;
 
 
 
-async function checkUser(){
-
-    var user = await Parse.User.currentAsync();
 
 
-    if(!user || !user.id){
-
-        window.location.replace("/login.html");
-        return null;
-
-    }
+async function start(){
 
 
-    await user.fetch();
+currentUser =
+await Parse.User.currentAsync();
 
 
-    return user;
+
+if(!currentUser){
+
+location.replace("/login.html");
+
+return;
 
 }
 
 
 
-document.addEventListener(
-"DOMContentLoaded",
-async function(){
-
-
-    currentUser = await checkUser();
-
-
-    if(!currentUser) return;
+await currentUser.fetch();
 
 
 
-    var avatar =
-    document.getElementById("avatar");
+loadUser();
+
+
+loadPosts();
+
+
+}
 
 
 
-    var file =
-    currentUser.get("avatar");
 
 
 
-    if(file){
 
-        avatar.src = file.url();
-
-    }else{
-
-        avatar.src =
-        "https://ui-avatars.com/api/?name="
-        + currentUser.get("username");
-
-    }
+function loadUser(){
 
 
 
-    document.getElementById("username").value =
-    currentUser.get("username") || "";
+document
+.getElementById("username")
+.value =
+currentUser.get("username") || "";
 
 
 
-    document.getElementById("bio").value =
-    currentUser.get("bio") || "";
+document
+.getElementById("bio")
+.value =
+currentUser.get("bio") || "";
 
 
-});
+
+
+document
+.getElementById("postsCount")
+.innerHTML =
+currentUser.get("postsCount") || 0;
+
+
+
+
+document
+.getElementById("followers")
+.innerHTML =
+currentUser.get("followers") || 0;
+
+
+
+
+document
+.getElementById("following")
+.innerHTML =
+currentUser.get("following") || 0;
+
+
+
+
+
+var avatar =
+currentUser.get("avatar");
+
+
+
+if(avatar){
+
+document.getElementById("avatar").src =
+avatar.url();
+
+}
+
+else{
+
+
+document.getElementById("avatar").src =
+"https://ui-avatars.com/api/?name="
++
+currentUser.get("username");
+
+
+}
+
+
+}
+
+
 
 
 
 
 
 document
-.getElementById("fileInput")
+.getElementById("file")
 .addEventListener(
 "change",
 async function(e){
 
 
-    var file = e.target.files[0];
+
+var file =
+e.target.files[0];
 
 
-    if(!file || !currentUser)
-    return;
-
-
-
-    var parseFile =
-    new Parse.File(
-        file.name,
-        file
-    );
+if(!file)return;
 
 
 
-    await parseFile.save();
+
+var parseFile =
+new Parse.File(
+file.name,
+file
+);
 
 
 
-    currentUser.set(
-        "avatar",
-        parseFile
-    );
+await parseFile.save();
 
 
 
-    await currentUser.save();
+
+currentUser.set(
+"avatar",
+parseFile
+);
 
 
 
-    document
-    .getElementById("avatar")
-    .src =
-    parseFile.url();
+await currentUser.save();
+
+
+
+
+document
+.getElementById("avatar")
+.src =
+parseFile.url();
+
 
 
 });
+
+
+
+
+
 
 
 
@@ -287,43 +568,125 @@ async function(e){
 async function saveProfile(){
 
 
-    if(!currentUser)
-    return;
+
+currentUser.set(
+"username",
+document.getElementById("username").value
+);
 
 
 
-    var username =
-    document.getElementById("username").value;
+currentUser.set(
+"bio",
+document.getElementById("bio").value
+);
 
 
 
-    var bio =
-    document.getElementById("bio").value;
+await currentUser.save();
 
 
 
-    currentUser.set(
-        "username",
-        username
-    );
+alert("Profil enregistré");
 
-
-
-    currentUser.set(
-        "bio",
-        bio
-    );
-
-
-
-    await currentUser.save();
-
-
-
-    alert("Profil mis à jour !");
 
 
 }
 
 
+
+
+
+
+
+
+
+async function loadPosts(){
+
+
+
+var query =
+new Parse.Query("Posts");
+
+
+
+query.equalTo(
+"owner",
+currentUser
+);
+
+
+
+query.descending(
+"createdAt"
+);
+
+
+
+var posts =
+await query.find();
+
+
+
+var grid =
+document.getElementById("grid");
+
+
+
+grid.innerHTML="";
+
+
+
+
+
+posts.forEach(function(post){
+
+
+
+var image =
+post.get("image");
+
+
+
+if(!image)return;
+
+
+
+var div =
+document.createElement("div");
+
+
+div.className="post";
+
+
+
+div.innerHTML =
+`
+<img src="${image.url()}">
+`;
+
+
+
+grid.appendChild(div);
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+start();
+
+
+
 </script>
+
+
+</div>
