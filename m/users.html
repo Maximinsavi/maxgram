@@ -1,41 +1,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
 <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
 
-
 <script>
-
 Parse.initialize(
 "BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc",
 "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV"
 );
 
-
-Parse.serverURL =
-"https://parseapi.back4app.com";
-
+Parse.serverURL = "https://parseapi.back4app.com";
 </script>
-
-
 
 
 <style>
 
-
 body{
-
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
 background:#fafafa;
-
 }
 
-
-
 .header{
-
 height:55px;
 background:white;
 border-bottom:1px solid #ddd;
@@ -43,498 +29,196 @@ display:flex;
 align-items:center;
 justify-content:center;
 font-weight:700;
-
 }
-
-
-
-#list{
-
-padding-bottom:20px;
-
-}
-
-
-
 
 .user{
-
 background:white;
 display:flex;
 align-items:center;
 padding:15px;
 border-bottom:1px solid #eee;
-
 }
 
-
-
 .avatar{
-
 width:60px;
 height:60px;
 border-radius:50%;
 object-fit:cover;
 margin-right:15px;
-
 }
-
-
 
 .info{
-
 flex:1;
-
 }
-
-
 
 .name{
-
 font-weight:700;
-font-size:16px;
-
 }
-
-
 
 .bio{
-
-color:#555;
 font-size:14px;
-
+color:#666;
 }
 
-
-
 button{
-
 border:none;
 background:#1877f2;
 color:white;
-padding:9px 18px;
+padding:9px 16px;
 border-radius:8px;
 font-weight:600;
-
 }
-
-
 
 .following{
-
 background:#eee;
 color:#111;
-
 }
 
-
-
 .empty{
-
 text-align:center;
 margin-top:40px;
 color:#777;
-
 }
-
 
 </style>
 
 
-
-
-
 <div class="header">
-
 Utilisateurs
-
 </div>
-
-
-
 
 <div id="list"></div>
 
 
-
-
-
-
-
 <script>
-
 
 var me = null;
 
 
-
-
-
-
-
 async function start(){
 
-
-
-me =
-await Parse.User.currentAsync();
-
-
+me = await Parse.User.currentAsync();
 
 if(!me){
-
-
 location.replace("/login.html");
-
 return;
-
-
 }
 
-
-
-await loadUsers();
-
-
+loadUsers();
 
 }
-
-
-
-
-
-
-
 
 
 async function loadUsers(){
 
-
-
-var query =
-new Parse.Query(Parse.User);
-
-
-
+var query = new Parse.Query("UsersPublic");
 query.limit(100);
 
+var users = await query.find();
 
-
-query.notEqualTo(
-"objectId",
-me.id
-);
-
-
-
-
-
-var users =
-await query.find();
-
-
-
-
-
-var list =
-document.getElementById("list");
-
-
-
-list.innerHTML="";
-
-
-
+var list = document.getElementById("list");
+list.innerHTML = "";
 
 
 if(users.length === 0){
-
-
-list.innerHTML =
-`
-<div class="empty">
-
-Aucun utilisateur trouvé
-
-</div>
-`;
-
+list.innerHTML = "<div class='empty'>Aucun utilisateur trouvé</div>";
 return;
-
-
 }
 
 
+for(var u of users){
+
+if(!u.get("user")) continue;
+
+if(u.get("user").id === me.id) continue;
 
 
+var avatar = u.get("avatar");
+
+var img = avatar
+? avatar.url()
+: "https://ui-avatars.com/api/?name=" + u.get("username");
 
 
-
-for(var user of users){
-
+var followed = await isFollowing(u.get("user"));
 
 
-var avatar =
-user.get("avatar");
+var div = document.createElement("div");
 
+div.className = "user";
 
+div.innerHTML = `
 
-var image =
-avatar
-?
-avatar.url()
-:
-"https://ui-avatars.com/api/?name="
-+
-user.get("username");
-
-
-
-
-
-var already =
-await isFollowing(user);
-
-
-
-
-
-var div =
-document.createElement("div");
-
-
-
-div.className="user";
-
-
-
-div.innerHTML =
-
-
-
-`
-
-<img class="avatar" src="${image}">
-
-
+<img class="avatar" src="${img}">
 
 <div class="info">
-
-
-<div class="name">
-
-${user.get("username") || "Utilisateur"}
-
+<div class="name">${u.get("username")}</div>
+<div class="bio">${u.get("bio") || ""}</div>
 </div>
 
-
-<div class="bio">
-
-${user.get("bio") || ""}
-
-</div>
-
-
-</div>
-
-
-
-
-
-<button 
-class="${already ? "following" : ""}"
-onclick="toggleFollow('${user.id}',this)">
-
-
-${already ? "Suivi" : "Suivre"}
-
-
+<button onclick="toggleFollow('${u.get("user").id}',this)"
+class="${followed ? "following" : ""}">
+${followed ? "Suivi" : "Suivre"}
 </button>
 
 `;
 
-
-
-
-
 list.appendChild(div);
 
-
-
-
-
 }
 
-
-
 }
-
-
-
-
-
-
-
 
 
 async function isFollowing(user){
 
+var q = new Parse.Query("Follow");
+q.equalTo("follower", me);
+q.equalTo("following", user);
 
-
-var query =
-new Parse.Query("Follow");
-
-
-
-query.equalTo(
-"follower",
-me
-);
-
-
-
-query.equalTo(
-"following",
-user
-);
-
-
-
-var result =
-await query.first();
-
-
-
-return result != null;
-
-
+var res = await q.first();
+return res != null;
 
 }
 
 
+async function toggleFollow(id, btn){
+
+var q = new Parse.Query(Parse.User);
+var target = await q.get(id);
 
 
+var check = new Parse.Query("Follow");
+check.equalTo("follower", me);
+check.equalTo("following", target);
 
-
-
-
-
-async function toggleFollow(id,button){
-
-
-
-var query =
-new Parse.Query(Parse.User);
-
-
-
-var target =
-await query.get(id);
-
-
-
-
-
-
-var check =
-new Parse.Query("Follow");
-
-
-
-check.equalTo(
-"follower",
-me
-);
-
-
-
-check.equalTo(
-"following",
-target
-);
-
-
-
-
-var exist =
-await check.first();
-
-
-
-
-
+var exist = await check.first();
 
 
 if(exist){
 
-
-
 await exist.destroy();
+btn.innerHTML = "Suivre";
+btn.classList.remove("following");
 
+}else{
 
+var Follow = Parse.Object.extend("Follow");
+var f = new Follow();
 
-button.innerHTML="Suivre";
+f.set("follower", me);
+f.set("following", target);
 
-button.classList.remove("following");
+await f.save();
 
-
-
-}
-
-else{
-
-
-
-var Follow =
-Parse.Object.extend("Follow");
-
-
-
-var follow =
-new Follow();
-
-
-
-follow.set(
-"follower",
-me
-);
-
-
-
-follow.set(
-"following",
-target
-);
-
-
-
-
-await follow.save();
-
-
-
-button.innerHTML="Suivi";
-
-button.classList.add("following");
-
-
+btn.innerHTML = "Suivi";
+btn.classList.add("following");
 
 }
 
-
-
-
-
 }
-
-
-
-
 
 
 start();
-
-
 
 </script>
