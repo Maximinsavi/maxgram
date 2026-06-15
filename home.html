@@ -1,174 +1,101 @@
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MaxGram Home</title>
+<div id="maxgram-header">
 
 <style>
 
-body {
-    margin:0;
-    font-family:"Segoe UI",Arial,sans-serif;
-    background:#f5f6f8;
-}
+#maxgram-header .header {
 
-
-/* HEADER */
-
-.header {
     width:100%;
     height:64px;
+
     background:white;
-    position:sticky;
+
+    position:fixed;
     top:0;
+    left:0;
+
     border-bottom:1px solid #ddd;
-    z-index:10;
+
+    z-index:9999;
+
 }
 
 
-.header td {
+#maxgram-header table {
+
+    width:100%;
+    height:64px;
+
+}
+
+
+#maxgram-header td {
+
     padding:0 15px;
+
 }
 
 
-.logo {
+
+#maxgram-header .logo {
+
     font-size:22px;
     font-weight:700;
     color:#1877f2;
+
 }
 
 
-.nav {
+
+#maxgram-header .nav {
+
     display:flex;
     justify-content:center;
     gap:12px;
+
 }
 
 
-.nav a {
+
+#maxgram-header .nav a {
+
     width:44px;
     height:44px;
+
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
+
     border-radius:14px;
+
     color:#555;
+
     text-decoration:none;
+
     transition:.2s;
+
 }
 
 
-.nav a:hover {
+
+#maxgram-header .nav a:hover {
+
     background:#f0f2f5;
     color:#1877f2;
+
 }
 
 
-svg {
+
+#maxgram-header svg {
+
     width:23px;
     height:23px;
-}
-
-
-
-/* PAGE */
-
-.content {
-    width:100%;
-}
-
-
-.block {
-
-    background:white;
-    margin:15px;
-    padding:20px;
-    border-radius:16px;
-
-    box-shadow:
-    0 2px 10px rgba(0,0,0,.04);
 
 }
-
-
-
-.block-title {
-
-    font-size:18px;
-    font-weight:600;
-    margin-bottom:10px;
-
-}
-
-
-
-.info {
-
-    color:#555;
-    font-size:14px;
-
-}
-
-
-
-.action {
-
-    display:block;
-    margin-top:12px;
-    padding:12px;
-    border-radius:12px;
-
-    background:#1877f2;
-    color:white;
-    text-align:center;
-
-    text-decoration:none;
-}
-
-
-
-.grid {
-
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-
-}
-
-
-.card {
-
-    background:#f5f6f8;
-    padding:15px;
-    border-radius:12px;
-
-}
-
-
-.number {
-
-    font-size:22px;
-    font-weight:700;
-
-}
-
-
 
 </style>
 
 
-</head>
-
-
-<body>
-
-
-
-<!-- HEADER -->
 
 <table class="header">
 
@@ -176,9 +103,11 @@ svg {
 
 
 <td width="30%">
+
 <div class="logo">
 MaxGram
 </div>
+
 </td>
 
 
@@ -187,6 +116,7 @@ MaxGram
 
 
 <div class="nav">
+
 
 
 <a href="/m/home.html">
@@ -200,6 +130,7 @@ stroke-width="2"/>
 </svg>
 
 </a>
+
 
 
 
@@ -219,6 +150,7 @@ stroke-width="2"/>
 
 
 
+
 <a href="/m/notifications.html">
 
 <svg viewBox="0 0 24 24" fill="none">
@@ -230,6 +162,7 @@ stroke-width="2"/>
 </svg>
 
 </a>
+
 
 
 
@@ -254,8 +187,11 @@ stroke-width="2"/>
 </td>
 
 
+
 <td width="30%">
+
 </td>
+
 
 
 </tr>
@@ -264,8 +200,3 @@ stroke-width="2"/>
 
 
 </div>
-
-
-
-</body>
-</html>
