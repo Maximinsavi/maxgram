@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login Google</title>
+<title>Login</title>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -13,8 +13,9 @@
 
 <body>
 
-<h2>Connexion Google</h2>
+<h2>Connexion avec Google</h2>
 
+<!-- GOOGLE LOGIN -->
 <div id="g_id_onload"
      data-client_id="422258767550-fqkv64t1ceo0o1f4phu7g47crb3vl5g2.apps.googleusercontent.com"
      data-callback="handleCredentialResponse"
@@ -28,12 +29,15 @@
 
 <script>
 function handleCredentialResponse(response) {
-    console.log("JWT GOOGLE:", response.credential);
 
-    // TEST SIMPLE
-    alert("Login OK");
+    // Token Google (JWT)
+    console.log("Google JWT:", response.credential);
 
-    // Ici tu peux envoyer vers Parse ou ton backend
+    // Optionnel: stocker le user
+    localStorage.setItem("google_token", response.credential);
+
+    // Redirection vers home
+    window.location.href = "/home.html";
 }
 </script>
 
