@@ -1,100 +1,155 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Home</title>
-
-<script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
-
 <style>
 body {
     margin: 0;
     font-family: "Segoe UI", Arial, sans-serif;
-    background: #f6f7fb;
 }
 
 /* HEADER */
-header {
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
     height: 60px;
-    background: white;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
     border-bottom: 1px solid #eaeaea;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 600;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 100;
 }
 
-/* CONTENT */
-.container {
-    padding: 40px 20px;
-    max-width: 600px;
-    margin: auto;
+/* LEFT LOGO */
+.logo {
+    font-weight: 700;
+    font-size: 18px;
+    color: #2f6fff;
 }
 
-.card {
-    background: white;
-    padding: 20px;
+/* CENTER NAV */
+.nav {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+/* ICON BUTTON */
+.nav a {
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #555;
+    transition: 0.2s;
 }
 
-.hidden {
-    display: none;
+.nav a:hover {
+    background: #f0f2f5;
+    color: #2f6fff;
+}
+
+.nav a.active {
+    background: #eaf1ff;
+    color: #2f6fff;
+}
+
+/* RIGHT MENU */
+.right {
+    display: flex;
+    gap: 10px;
+}
+
+/* small badge */
+.badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: red;
+    color: white;
+    font-size: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ICON WRAPPER */
+.icon-wrap {
+    position: relative;
+}
+
+svg {
+    width: 22px;
+    height: 22px;
 }
 </style>
 
-</head>
+<div class="header">
 
-<body>
+    <!-- LOGO -->
+    <div class="logo">MaxGram</div>
 
-<header>
-    Home
-</header>
+    <!-- NAV CENTER -->
+    <div class="nav">
 
-<div class="container hidden" id="content">
+        <!-- HOME -->
+        <a href="/m/home.html" class="active">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"
+                      stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </a>
 
-    <div class="card">
+        <!-- FRIENDS -->
+        <a href="/m/friends.html">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      stroke="currentColor" stroke-width="2"/>
+                <circle cx="8.5" cy="7" r="3" stroke="currentColor" stroke-width="2"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"
+                      stroke="currentColor" stroke-width="2"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"
+                      stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </a>
 
-        <h2>Bienvenue</h2>
+        <!-- MESSAGES -->
+        <a href="/m/messages.html">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"
+                      stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </a>
 
-        <p id="userInfo">Chargement...</p>
+        <!-- NOTIFICATIONS -->
+        <div class="icon-wrap">
+            <a href="/m/notifications.html">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"
+                          stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </a>
+            <div class="badge">3</div>
+        </div>
 
-        <button onclick="logout()">Se déconnecter</button>
+        <!-- MENU -->
+        <a href="/m/menu.html">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 6h16M4 12h16M4 18h16"
+                      stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </a>
 
     </div>
 
+    <!-- RIGHT -->
+    <div class="right">
+    </div>
+
 </div>
-
-<script>
-
-// INIT PARSE
-Parse.initialize("BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc", "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV");
-Parse.serverURL = "https://parseapi.back4app.com";
-
-/* CHECK USER LOGIN */
-const user = Parse.User.current();
-
-if (!user) {
-    window.location.href = "/login.html";
-} else {
-
-    document.getElementById("content").classList.remove("hidden");
-
-    document.getElementById("userInfo").innerHTML =
-        "Utilisateur : " + user.get("username") + "<br>Email : " + user.get("email");
-}
-
-/* LOGOUT */
-function logout() {
-    Parse.User.logOut().then(() => {
-        window.location.href = "/login.html";
-    });
-}
-
-</script>
-
-</body>
-</html>
