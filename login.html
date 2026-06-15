@@ -74,6 +74,24 @@ button:hover {
     background: #2457d6;
 }
 
+/* LINK */
+.link {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #555;
+    text-align: center;
+}
+
+.link a {
+    color: #2f6fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link a:hover {
+    text-decoration: underline;
+}
+
 /* TOAST */
 .toast {
     position: fixed;
@@ -126,6 +144,10 @@ button:hover {
 
     </form>
 
+    <div class="link">
+        Vous n’avez pas de compte ? <a href="/register.html">Créer un compte</a>
+    </div>
+
 </div>
 
 <div id="toast" class="toast"></div>
@@ -138,7 +160,7 @@ var supabaseKey = "sb_publishable_Vj1M_Jkv68n4EXuMmzjNow_RI05o_jh";
 
 var supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* REDIRECT SI CONNECTÉ */
+/* CHECK USER */
 async function checkUser(){
     var { data } = await supabase.auth.getUser();
 
