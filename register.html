@@ -1,14 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Register - MaxGram</title>
+<title>Auth - MaxGram</title>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
 body {
+    margin: 0;
     font-family: Arial, sans-serif;
     background: #0f0f0f;
     color: white;
@@ -19,106 +19,96 @@ body {
 }
 
 /* Container */
-.form-box {
+.box {
     background: #1c1c1c;
-    padding: 30px;
+    padding: 35px;
     border-radius: 12px;
     width: 320px;
+    text-align: center;
 }
 
-/* Inputs */
-input {
+/* Buttons */
+.btn {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
-    border-radius: 6px;
+    border-radius: 8px;
     border: none;
-    outline: none;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-/* Button */
-button {
-    width: 100%;
-    padding: 10px;
+.google {
+    background: white;
+    color: black;
+    font-weight: bold;
+}
+
+.email {
     background: #4a6fff;
     color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
 }
 
-button:hover {
+.register {
+    background: transparent;
+    border: 1px solid #555;
+    color: white;
+}
+
+.register:hover {
+    background: #222;
+}
+
+.google:hover {
+    background: #f1f1f1;
+}
+
+.email:hover {
     background: #3b5be0;
 }
 
-/* Error */
-.error {
-    color: #ff4d4d;
-    font-size: 12px;
-    margin-top: -5px;
+.logo {
+    font-size: 22px;
+    margin-bottom: 20px;
 }
-
-/* Error input */
-.errorInput {
-    border: 2px solid #ff4d4d;
-}
-
-/* Password popup */
-#password-popup {
-    display: none;
-    position: absolute;
-    background: #222;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 12px;
-    width: 220px;
-}
-
-/* Conditions */
-.PASS { color: #00ff88; }
-.FAIL { color: #ff4d4d; }
 </style>
 </head>
 
 <body>
 
-<div class="form-box">
+<div class="box">
 
-    <h2>Créer un compte</h2>
+    <div class="logo">MaxGram</div>
 
-    <input id="email" type="text" placeholder="Email">
+    <button class="btn google" onclick="loginGoogle()">
+        Se connecter avec Google
+    </button>
 
-    <input id="password" type="password" placeholder="Mot de passe">
+    <button class="btn email" onclick="goLogin()">
+        Se connecter avec Email
+    </button>
 
-    <div id="password-popup">
-        <div id="lowercase-condition">✔ minuscule</div>
-        <div id="uppercase-condition">✔ majuscule</div>
-        <div id="number-condition">✔ chiffre</div>
-        <div id="minimum-condition">✔ 8 caractères</div>
-    </div>
-
-    <button onclick="register()">S'inscrire</button>
+    <button class="btn register" onclick="goRegister()">
+        Créer un compte
+    </button>
 
 </div>
 
 <script>
-var google_client_id = "TON_CLIENT_ID_GOOGLE";
-var domain = "https://maxgram-chi.vercel.app";
+function loginGoogle() {
+    alert("Ici tu branches Google OAuth");
+    // window.location.href = "google-login.html";
+}
+
+function goLogin() {
+    window.location.href = "login.html";
+}
+
+function goRegister() {
+    window.location.href = "register.html";
+}
 </script>
 
-<script>
-function register() {
-    var email = $("#email").val();
-    var password = $("#password").val();
-
-    if (!email || !password) {
-        alert("Champs requis");
-        return;
-    }
-
-    alert("Inscription OK (brancher Parse ici)");
-} 
-</script>
 </body>
 </html>
         
