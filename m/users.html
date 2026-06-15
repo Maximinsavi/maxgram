@@ -16,15 +16,13 @@ Parse.initialize(
 Parse.serverURL =
 "https://parseapi.back4app.com";
 
-
 </script>
 
 
 
-<div id="users">
-
 
 <style>
+
 
 body{
 
@@ -38,15 +36,24 @@ background:#fafafa;
 
 .header{
 
-height:50px;
+height:55px;
 background:white;
 border-bottom:1px solid #ddd;
 display:flex;
 align-items:center;
 justify-content:center;
-font-weight:bold;
+font-weight:700;
 
 }
+
+
+
+#list{
+
+padding-bottom:20px;
+
+}
+
 
 
 
@@ -64,8 +71,8 @@ border-bottom:1px solid #eee;
 
 .avatar{
 
-width:55px;
-height:55px;
+width:60px;
+height:60px;
 border-radius:50%;
 object-fit:cover;
 margin-right:15px;
@@ -84,7 +91,17 @@ flex:1;
 
 .name{
 
-font-weight:bold;
+font-weight:700;
+font-size:16px;
+
+}
+
+
+
+.bio{
+
+color:#555;
+font-size:14px;
 
 }
 
@@ -95,9 +112,9 @@ button{
 border:none;
 background:#1877f2;
 color:white;
-padding:8px 15px;
+padding:9px 18px;
 border-radius:8px;
-font-weight:bold;
+font-weight:600;
 
 }
 
@@ -111,6 +128,16 @@ color:#111;
 }
 
 
+
+.empty{
+
+text-align:center;
+margin-top:40px;
+color:#777;
+
+}
+
+
 </style>
 
 
@@ -118,16 +145,16 @@ color:#111;
 
 
 <div class="header">
+
 Utilisateurs
+
 </div>
+
 
 
 
 <div id="list"></div>
 
-
-
-</div>
 
 
 
@@ -137,14 +164,15 @@ Utilisateurs
 <script>
 
 
-
-var me=null;
-
+var me = null;
 
 
 
 
-async function init(){
+
+
+
+async function start(){
 
 
 
@@ -155,15 +183,18 @@ await Parse.User.currentAsync();
 
 if(!me){
 
+
 location.replace("/login.html");
 
 return;
+
 
 }
 
 
 
-loadUsers();
+await loadUsers();
+
 
 
 }
@@ -185,6 +216,10 @@ new Parse.Query(Parse.User);
 
 
 
+query.limit(100);
+
+
+
 query.notEqualTo(
 "objectId",
 me.id
@@ -192,8 +227,12 @@ me.id
 
 
 
+
+
 var users =
 await query.find();
+
+
 
 
 
@@ -208,12 +247,30 @@ list.innerHTML="";
 
 
 
+if(users.length === 0){
+
+
+list.innerHTML =
+`
+<div class="empty">
+
+Aucun utilisateur trouvé
+
+</div>
+`;
+
+return;
+
+
+}
+
+
+
+
+
+
+
 for(var user of users){
-
-
-
-var followed =
-await checkFollow(user);
 
 
 
@@ -222,14 +279,21 @@ user.get("avatar");
 
 
 
-var img =
-avatar ?
+var image =
+avatar
+?
 avatar.url()
 :
 "https://ui-avatars.com/api/?name="
 +
 user.get("username");
 
+
+
+
+
+var already =
+await isFollowing(user);
 
 
 
@@ -246,22 +310,25 @@ div.className="user";
 
 div.innerHTML =
 
+
+
 `
 
-<img class="avatar"
-src="${img}">
+<img class="avatar" src="${image}">
+
 
 
 <div class="info">
 
+
 <div class="name">
 
-${user.get("username")}
+${user.get("username") || "Utilisateur"}
 
 </div>
 
 
-<div>
+<div class="bio">
 
 ${user.get("bio") || ""}
 
@@ -272,16 +339,21 @@ ${user.get("bio") || ""}
 
 
 
-<button 
-class="${followed ? "following":""}"
-onclick="followUser('${user.id}',this)">
 
-${followed ? "Suivi" : "Suivre"}
+
+<button 
+class="${already ? "following" : ""}"
+onclick="toggleFollow('${user.id}',this)">
+
+
+${already ? "Suivi" : "Suivre"}
+
 
 </button>
 
-
 `;
+
+
 
 
 
@@ -289,20 +361,23 @@ list.appendChild(div);
 
 
 
-}
 
 
 }
 
 
 
+}
 
 
 
 
 
 
-async function checkFollow(user){
+
+
+
+async function isFollowing(user){
 
 
 
@@ -330,7 +405,7 @@ await query.first();
 
 
 
-return !!result;
+return result != null;
 
 
 
@@ -344,7 +419,7 @@ return !!result;
 
 
 
-async function followUser(id,btn){
+async function toggleFollow(id,button){
 
 
 
@@ -353,8 +428,9 @@ new Parse.Query(Parse.User);
 
 
 
-var user =
+var target =
 await query.get(id);
+
 
 
 
@@ -374,13 +450,15 @@ me
 
 check.equalTo(
 "following",
-user
+target
 );
+
 
 
 
 var exist =
 await check.first();
+
 
 
 
@@ -395,18 +473,21 @@ await exist.destroy();
 
 
 
-btn.innerHTML="Suivre";
+button.innerHTML="Suivre";
 
-btn.classList.remove("following");
+button.classList.remove("following");
 
 
 
-}else{
+}
+
+else{
 
 
 
 var Follow =
 Parse.Object.extend("Follow");
+
 
 
 var follow =
@@ -423,8 +504,9 @@ me
 
 follow.set(
 "following",
-user
+target
 );
+
 
 
 
@@ -432,14 +514,9 @@ await follow.save();
 
 
 
-btn.innerHTML="Suivi";
+button.innerHTML="Suivi";
 
-btn.classList.add("following");
-
-
-
-}
-
+button.classList.add("following");
 
 
 
@@ -449,7 +526,14 @@ btn.classList.add("following");
 
 
 
-init();
+}
+
+
+
+
+
+
+start();
 
 
 
