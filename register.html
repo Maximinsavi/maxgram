@@ -2,14 +2,16 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Auth - MaxGram</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<title>Login - MaxGram</title>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <style>
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: #0f0f0f;
     color: white;
     display: flex;
@@ -18,58 +20,22 @@ body {
     height: 100vh;
 }
 
-/* Container */
 .box {
     background: #1c1c1c;
-    padding: 35px;
+    padding: 30px;
     border-radius: 12px;
     width: 320px;
     text-align: center;
 }
 
-/* Buttons */
-.btn {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.google {
-    background: white;
-    color: black;
-    font-weight: bold;
-}
-
-.email {
-    background: #4a6fff;
-    color: white;
-}
-
-.register {
-    background: transparent;
-    border: 1px solid #555;
-    color: white;
-}
-
-.register:hover {
-    background: #222;
-}
-
-.google:hover {
-    background: #f1f1f1;
-}
-
-.email:hover {
-    background: #3b5be0;
-}
-
-.logo {
-    font-size: 22px;
+h2 {
     margin-bottom: 20px;
+}
+
+.info {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 10px;
 }
 </style>
 </head>
@@ -77,200 +43,46 @@ body {
 <body>
 
 <div class="box">
+    <h2>MaxGram</h2>
 
-    <div class="logo">MaxGram</div>
+    <div id="g_id_onload"
+         data-client_id="https://422258767550-fqkv64t1ceo0o1f4phu7g47crb3vl5g2.apps.googleusercontent.com"
+         data-callback="handleGoogleLogin"
+         data-auto_prompt="false">
+    </div>
 
-    <button class="btn google" onclick="loginGoogle()">
-        Se connecter avec Google
-    </button>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular">
+    </div>
 
-    <button class="btn email" onclick="goLogin()">
-        Se connecter avec Email
-    </button>
-
-    <button class="btn register" onclick="goRegister()">
-        Créer un compte
-    </button>
-
+    <div class="info">
+        Connexion sécurisée avec Google
+    </div>
 </div>
 
 <script>
-function loginGoogle() {
-    alert("Ici tu branches Google OAuth");
-    // window.location.href = "google-login.html";
-}
+function handleGoogleLogin(response) {
 
-function goLogin() {
-    window.location.href = "login.html";
-}
+    // Token JWT Google
+    const id_token = response.credential;
 
-function goRegister() {
-    window.location.href = "register.html";
+    console.log("Google Token:", id_token);
+
+    // Ici tu peux :
+    // 1. envoyer vers Parse / backend
+    // 2. créer utilisateur automatiquement
+    // 3. rediriger vers dashboard
+
+    alert("Connexion Google réussie !");
+
+    // Exemple redirection
+    // window.location.href = "dashboard.html";
 }
 </script>
 
 </body>
 </html>
-        
-
-<script>
-  var google_client_id= 'https://422258767550-fqkv64t1ceo0o1f4phu7g47crb3vl5g2.apps.googleusercontent.com';
-  var domain = 'https://maxgram-chi.vercel.app';
-  
-  $(window).resize(function() {
-    if ($("#password-popup").is(":visible")) {
-      $("#password-popup").css({
-	      top: $("#password").offset().top - $("#password-popup").outerHeight() - 4,
-	      left: $("#password").offset().left - 20.5
-      });
-    }
-  });
-  
-  $("#password").on("focus", function() {
-  	$("#password-popup").css({
-      top: $("#password").offset().top - $("#password-popup").outerHeight() - 4,
-      left: $("#password").offset().left - 20.5
-    }).show();
-  });
-  
-  $("#password").on("focusout", function() {
-  	$("#password-popup").hide();
-  	validatePassword();
-  });
-  
-  $("#password").on("input", function() {
-	validatePassword();
-  });
-  
-  $("#email").on("focusout", function() {
-  	validateEmail();
-  });
-  
-  function validateEmail() {
-  	const email = $("#email").val();
-  	
-  	if (email.length == 0) {
-		addError($("#email"), "Email required");
-		return;
-	}
-
-	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-		addError($("#email"), "Invalid format. Please enter a valid email address");
-		return;
-	}
-	
-	hideError($("#email"));
-  }
-  
-  function validatePassword() {
-  	const password = $("#password").val();
-  	const email = $("#email").val();
-  	
-  	var isLower = checkAndSetCondition(password, ".*[a-z].*", $("#lowercase-condition"));
-	var isUpper = checkAndSetCondition(password, ".*[A-Z].*", $("#uppercase-condition"));
-	var isNumber = checkAndSetCondition(password, ".*[0-9].*", $("#number-condition"));
-	var isLength = checkAndSetCondition(password, ".{8,}", $("#minimum-condition"));
-	
-	if (password.length == 0) {
-		addError($("#password"), "Password required");
-		return;
-	}
-	if (!isLower || !isUpper || !isNumber || !isLength) {
-		addError($("#password"), "Passwords must meet all the requirements");
-		return;
-	}
-	if (email == password) {
-		addError($("#password"), "Password can't be the same as the email");
-		return;
-	}
-	
-	hideError($("#password"));
-  }
-  
-  function checkAndSetCondition(text, conditionExpression, element) {
-  	$(element).removeClass("NONE").removeClass("PASS").removeClass("FAIL");
-  	if (new RegExp(conditionExpression).test(text)) {
-  		$(element).addClass("PASS");
-  		return true;
-  	}
-  	else {
-  		$(element).addClass("FAIL");
-  		return false;
-  	}
-  };
-  
-  function addError(element, text) {
-  	$(element).addClass("errorInput");
-  	if ($(element).parent().find(".error").length == 0)
-		$(element).parent().append($("<div class='error'>" + text + "</div>"));
-  }
-  
-  function hideError(element) {
-	$(element).removeClass("errorInput");
-  	$(element).parent().find(".error").remove();
-  }
-
-  function readCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0)==' ') c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-  };
-
-  function getAnalyticsData() {
-    var data = {
-        url: $("#usernote-login input[name='url']").val(),
-        username: $("#usernote-login #email").val(),
-        password: $("#usernote-login #password").val(),
-        rememberMe: $("#rememberMe").val(),
-        "struts.token.name": "token",
-        token: $("#usernote-login input[name='token']").val(),
-        fromPurchase: true,
-        period: $("input[name=period]:checked").val(),
-        edition: $("input[name=edition]").val(),
-        operation: $("input[name=operation]").val(),
-        reToken: $("input[name=reToken]").val()
-    };
-
-    var existingCookie = readCookie("jim");
-    
-    var source, medium, campaign, term, content, gclid;
-    if(existingCookie){
-      if (typeof existingCookie === 'string' || existingCookie instanceof String){
-        if(existingCookie.slice(-1)==="\""){
-            existingCookie = existingCookie.slice(0, -1);
-        }
-        source = readValueFromPairList(existingCookie, "source", "|");
-        medium = readValueFromPairList(existingCookie, "medium", "|");
-        campaign = readValueFromPairList(existingCookie, "campaign", "|");
-        term = readValueFromPairList(existingCookie, "term", "|").replace(/\+/g," ");
-        content = readValueFromPairList(existingCookie, "content", "|");
-        gclid = readValueFromPairList(existingCookie, "gclid", "|");
-      }
-    }
-
-    var extraData = {};
-    if(existingCookie) {
-        extraData = {
-            campaignSource:     source,
-            campaignMedium:     medium,
-            campaignKeyword:    term,
-            campaignContent:    content,
-            campaignId:         campaign,
-            adwordsID:          gclid
-        };
-    }
-    return $.extend(data, extraData);
-  }
-</script>        
-
-</div>
-
-
-</body>
-</html>
-
