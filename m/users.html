@@ -1,0 +1,456 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<script src="https://unpkg.com/parse/dist/parse.min.js"></script>
+
+
+<script>
+
+Parse.initialize(
+"BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc",
+"88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV"
+);
+
+
+Parse.serverURL =
+"https://parseapi.back4app.com";
+
+
+</script>
+
+
+
+<div id="users">
+
+
+<style>
+
+body{
+
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:#fafafa;
+
+}
+
+
+
+.header{
+
+height:50px;
+background:white;
+border-bottom:1px solid #ddd;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+
+}
+
+
+
+.user{
+
+background:white;
+display:flex;
+align-items:center;
+padding:15px;
+border-bottom:1px solid #eee;
+
+}
+
+
+
+.avatar{
+
+width:55px;
+height:55px;
+border-radius:50%;
+object-fit:cover;
+margin-right:15px;
+
+}
+
+
+
+.info{
+
+flex:1;
+
+}
+
+
+
+.name{
+
+font-weight:bold;
+
+}
+
+
+
+button{
+
+border:none;
+background:#1877f2;
+color:white;
+padding:8px 15px;
+border-radius:8px;
+font-weight:bold;
+
+}
+
+
+
+.following{
+
+background:#eee;
+color:#111;
+
+}
+
+
+</style>
+
+
+
+
+
+<div class="header">
+Utilisateurs
+</div>
+
+
+
+<div id="list"></div>
+
+
+
+</div>
+
+
+
+
+
+
+<script>
+
+
+
+var me=null;
+
+
+
+
+
+async function init(){
+
+
+
+me =
+await Parse.User.currentAsync();
+
+
+
+if(!me){
+
+location.replace("/login.html");
+
+return;
+
+}
+
+
+
+loadUsers();
+
+
+}
+
+
+
+
+
+
+
+
+
+async function loadUsers(){
+
+
+
+var query =
+new Parse.Query(Parse.User);
+
+
+
+query.notEqualTo(
+"objectId",
+me.id
+);
+
+
+
+var users =
+await query.find();
+
+
+
+var list =
+document.getElementById("list");
+
+
+
+list.innerHTML="";
+
+
+
+
+
+for(var user of users){
+
+
+
+var followed =
+await checkFollow(user);
+
+
+
+var avatar =
+user.get("avatar");
+
+
+
+var img =
+avatar ?
+avatar.url()
+:
+"https://ui-avatars.com/api/?name="
++
+user.get("username");
+
+
+
+
+
+
+var div =
+document.createElement("div");
+
+
+
+div.className="user";
+
+
+
+div.innerHTML =
+
+`
+
+<img class="avatar"
+src="${img}">
+
+
+<div class="info">
+
+<div class="name">
+
+${user.get("username")}
+
+</div>
+
+
+<div>
+
+${user.get("bio") || ""}
+
+</div>
+
+
+</div>
+
+
+
+<button 
+class="${followed ? "following":""}"
+onclick="followUser('${user.id}',this)">
+
+${followed ? "Suivi" : "Suivre"}
+
+</button>
+
+
+`;
+
+
+
+list.appendChild(div);
+
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+async function checkFollow(user){
+
+
+
+var query =
+new Parse.Query("Follow");
+
+
+
+query.equalTo(
+"follower",
+me
+);
+
+
+
+query.equalTo(
+"following",
+user
+);
+
+
+
+var result =
+await query.first();
+
+
+
+return !!result;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+async function followUser(id,btn){
+
+
+
+var query =
+new Parse.Query(Parse.User);
+
+
+
+var user =
+await query.get(id);
+
+
+
+
+
+var check =
+new Parse.Query("Follow");
+
+
+
+check.equalTo(
+"follower",
+me
+);
+
+
+
+check.equalTo(
+"following",
+user
+);
+
+
+
+var exist =
+await check.first();
+
+
+
+
+
+
+if(exist){
+
+
+
+await exist.destroy();
+
+
+
+btn.innerHTML="Suivre";
+
+btn.classList.remove("following");
+
+
+
+}else{
+
+
+
+var Follow =
+Parse.Object.extend("Follow");
+
+
+var follow =
+new Follow();
+
+
+
+follow.set(
+"follower",
+me
+);
+
+
+
+follow.set(
+"following",
+user
+);
+
+
+
+await follow.save();
+
+
+
+btn.innerHTML="Suivi";
+
+btn.classList.add("following");
+
+
+
+}
+
+
+
+
+}
+
+
+
+
+
+init();
+
+
+
+</script>
