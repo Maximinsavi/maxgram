@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Home - MaxGram</title>
+<title>Home</title>
 
 <style>
 body {
@@ -14,32 +14,31 @@ body {
     background: #f6f7fb;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header {
     position: fixed;
     top: 0;
     width: 100%;
     height: 60px;
-    background: white;
+    background: #fff;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     padding: 0 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     z-index: 100;
 }
 
 .logo {
-    font-weight: bold;
-    font-size: 18px;
+    font-weight: 600;
 }
 
 .user {
-    font-size: 14px;
+    font-size: 13px;
     color: #555;
 }
 
-/* ===== FEED ===== */
+/* FEED */
 .feed {
     margin-top: 80px;
     max-width: 600px;
@@ -48,9 +47,8 @@ header {
     padding: 10px;
 }
 
-/* post */
 .post {
-    background: white;
+    background: #fff;
     border-radius: 12px;
     margin-bottom: 15px;
     overflow: hidden;
@@ -59,10 +57,13 @@ header {
 
 .post img {
     width: 100%;
+    display: block;
 }
 
 .post-content {
     padding: 10px;
+    font-size: 14px;
+    color: #111;
 }
 
 .actions {
@@ -71,33 +72,33 @@ header {
     padding: 10px;
 }
 
-button {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-/* ===== FOOTER ===== */
+/* FOOTER */
 footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 55px;
-    background: white;
+    height: 60px;
+    background: #fff;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #eaeaea;
 }
 
-footer button {
-    font-size: 18px;
+.nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
 }
 
-/* active style */
-.active {
-    color: #4a6fff;
+.nav-btn.active {
+    color: #2f6fff;
+}
+
+svg {
+    width: 22px;
+    height: 22px;
 }
 </style>
 
@@ -105,52 +106,62 @@ footer button {
 
 <body>
 
-<!-- HEADER -->
 <header>
     <div class="logo">MaxGram</div>
     <div class="user" id="user">Chargement...</div>
 </header>
 
-<!-- FEED -->
 <div class="feed">
 
     <div class="post">
         <img src="https://picsum.photos/600/400?random=1">
         <div class="post-content">
-            <strong>Max</strong> Bienvenue sur MaxGram 🚀
-        </div>
-        <div class="actions">
-            <button>❤️</button>
-            <button>💬</button>
-            <button>🔗</button>
+            <strong>Max</strong> Welcome post
         </div>
     </div>
 
     <div class="post">
         <img src="https://picsum.photos/600/400?random=2">
         <div class="post-content">
-            <strong>Ana</strong> Nouveau post 😍
-        </div>
-        <div class="actions">
-            <button>❤️</button>
-            <button>💬</button>
-            <button>🔗</button>
+            <strong>Ana</strong> Second post
         </div>
     </div>
 
 </div>
 
-<!-- FOOTER -->
 <footer>
-    <button class="active">🏠</button>
-    <button>🔍</button>
-    <button>➕</button>
-    <button>❤️</button>
-    <button>👤</button>
+
+    <button class="nav-btn active">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"
+                  stroke="currentColor" stroke-width="2"/>
+        </svg>
+    </button>
+
+    <button class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+            <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2"/>
+        </svg>
+    </button>
+
+    <button class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2"/>
+        </svg>
+    </button>
+
+    <button class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                  stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+        </svg>
+    </button>
+
 </footer>
 
 <script>
-// Google user (depuis login)
 const token = localStorage.getItem("google_token");
 
 if (!token) {
