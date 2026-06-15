@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Home</title>
+<title>Home - Maximin</title>
 
 <style>
 body {
@@ -14,93 +14,73 @@ body {
     background: #f6f7fb;
 }
 
-/* HEADER NAV */
+/* HEADER */
 header {
     position: fixed;
     top: 0;
     width: 100%;
     height: 60px;
     background: #fff;
+    border-bottom: 1px solid #eaeaea;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid #eaeaea;
-}
-
-.nav {
-    display: flex;
-    gap: 25px;
-}
-
-.nav a {
-    text-decoration: none;
-    color: #555;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.nav a:hover {
-    color: #2f6fff;
+    font-weight: 600;
 }
 
 /* CONTAINER */
 .container {
-    margin-top: 100px;
+    margin-top: 90px;
     display: flex;
     justify-content: center;
+    padding: 20px;
 }
 
 /* CARD */
 .card {
+    width: 420px;
     background: #fff;
-    width: 380px;
     border-radius: 14px;
-    padding: 25px;
+    padding: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    text-align: center;
 }
 
-.avatar {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    margin-bottom: 15px;
+/* SECTIONS */
+.section {
+    margin-bottom: 20px;
 }
 
-.name {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.email {
+.title {
     font-size: 13px;
-    color: #666;
-    margin-top: 5px;
+    color: #777;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* INFO BOX */
-.info {
-    margin-top: 20px;
-    text-align: left;
+.box {
+    padding: 12px;
+    background: #f3f5f9;
+    border-radius: 10px;
     font-size: 14px;
-    color: #333;
-    line-height: 1.8;
+    color: #222;
 }
 
-/* BUTTON */
-button {
-    margin-top: 20px;
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background: #ff4d4d;
+/* BOT BUTTON */
+.bot-link {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+    background: #2f6fff;
     color: white;
-    border-radius: 8px;
-    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 10px;
 }
 
-button:hover {
-    background: #e03b3b;
+.bot-link:hover {
+    background: #2457d6;
 }
 </style>
 
@@ -109,66 +89,48 @@ button:hover {
 <body>
 
 <header>
-    <div class="nav">
-        <a href="/home.html">Home</a>
-        <a href="/profile.html">Profile</a>
-        <a href="/settings.html">Settings</a>
-        <a href="/logout.html" onclick="logout()">Logout</a>
-    </div>
+    Dashboard Maximin
 </header>
 
 <div class="container">
 
     <div class="card">
 
-        <img id="avatar" class="avatar">
-
-        <div class="name" id="name">Chargement...</div>
-        <div class="email" id="email"></div>
-
-        <div class="info" id="info">
-            Loading user data...
+        <!-- SECTION 1 -->
+        <div class="section">
+            <div class="title">Informations personnelles</div>
+            <div class="box">
+                Nom : Maximin<br>
+                Statut : Administrateur<br>
+                Projet : MaxGram / MaxChat
+            </div>
         </div>
 
-        <button onclick="logout()">Se déconnecter</button>
+        <!-- SECTION 2 -->
+        <div class="section">
+            <div class="title">Projet actif</div>
+            <div class="box">
+                MaxGram - Réseau social<br>
+                MaxChat - Bot IA
+            </div>
+        </div>
+
+        <!-- SECTION 3 -->
+        <div class="section">
+            <div class="title">Accès bot</div>
+
+            <div class="box">
+                Accéder à mon assistant intelligent
+            </div>
+
+            <a class="bot-link" href="/api/maxchat.html">
+                Ouvrir MaxChat
+            </a>
+        </div>
 
     </div>
 
 </div>
-
-<script>
-function parseJwt(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(atob(base64));
-}
-
-const token = localStorage.getItem("google_token");
-
-if (!token) {
-    window.location.href = "/index.html";
-} else {
-
-    const user = parseJwt(token);
-
-    document.getElementById("name").innerText = user.name;
-    document.getElementById("email").innerText = user.email;
-    document.getElementById("avatar").src = user.picture;
-
-    document.getElementById("info").innerHTML = `
-        <strong>Informations du compte</strong><br>
-        Nom : ${user.name}<br>
-        Email : ${user.email}<br>
-        Identifiant Google actif<br>
-        Session sécurisée active
-    `;
-}
-
-function logout() {
-    localStorage.removeItem("google_token");
-    window.location.href = "/index.html";
-}
-</script>
 
 </body>
 </html>
