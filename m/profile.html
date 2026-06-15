@@ -4,10 +4,14 @@
 <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
 
 <script>
-Parse.initialize("APP_ID", "JS_KEY");
+Parse.initialize(
+    "BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc",
+    "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV"
+);
+
 Parse.serverURL = "https://parseapi.back4app.com";
-Parse.enableLocalDatastore();
 </script>
+
 
 <div id="profile-page">
 
@@ -19,7 +23,6 @@ body{
     background:#fafafa;
 }
 
-/* HEADER */
 #profile-header{
     height:50px;
     background:white;
@@ -50,7 +53,6 @@ body{
     margin-right:40px;
 }
 
-/* PROFILE */
 #profile-box{
     background:white;
     padding:20px;
@@ -93,113 +95,235 @@ button{
 }
 
 button:active{
-    transform:scale(0.98);
+    transform:scale(.98);
 }
 
 </style>
 
-<!-- HEADER -->
+
 <div id="profile-header">
 
 <div id="back-btn" onclick="history.back()">
+
 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-<path d="M15 18l-6-6 6-6" stroke="black" stroke-width="2"/>
+<path d="M15 18l-6-6 6-6"
+stroke="black"
+stroke-width="2"/>
 </svg>
+
 </div>
 
 <div id="title">Profil</div>
 
 </div>
 
-<!-- PROFILE -->
+
 <div id="profile-box">
 
-<div id="profile-avatar" onclick="document.getElementById('fileInput').click()">
-    <img id="avatar" src="">
+
+<div id="profile-avatar"
+onclick="document.getElementById('fileInput').click()">
+
+<img id="avatar">
+
 </div>
 
-<input type="file" id="fileInput" style="display:none" accept="image/*">
+
+<input 
+type="file"
+id="fileInput"
+style="display:none"
+accept="image/*">
+
 
 <input id="username" placeholder="Username">
-<textarea id="bio" placeholder="Bio"></textarea>
 
-<button onclick="saveProfile()">Enregistrer</button>
+
+<textarea 
+id="bio"
+placeholder="Bio"></textarea>
+
+
+<button onclick="saveProfile()">
+Enregistrer
+</button>
+
 
 </div>
 
+
 </div>
+
 
 <script>
 
-async function checkUser(){
-
-    await Parse.User.currentAsync();
-
-    var user = Parse.User.current();
-
-    if(!user || !user.id){
-        window.location.replace("/login.html");
-        return null;
-    }
-
-    return user;
-}
-
 var currentUser = null;
 
-document.addEventListener("DOMContentLoaded", async function(){
+
+
+async function checkUser(){
+
+    var user = await Parse.User.currentAsync();
+
+
+    if(!user || !user.id){
+
+        window.location.replace("/login.html");
+        return null;
+
+    }
+
+
+    await user.fetch();
+
+
+    return user;
+
+}
+
+
+
+document.addEventListener(
+"DOMContentLoaded",
+async function(){
+
 
     currentUser = await checkUser();
 
+
     if(!currentUser) return;
 
-    var avatar = document.getElementById("avatar");
 
-    var file = currentUser.get("avatar");
+
+    var avatar =
+    document.getElementById("avatar");
+
+
+
+    var file =
+    currentUser.get("avatar");
+
+
 
     if(file){
+
         avatar.src = file.url();
-    } else {
-        avatar.src = "https://ui-avatars.com/api/?name=" + currentUser.get("username");
+
+    }else{
+
+        avatar.src =
+        "https://ui-avatars.com/api/?name="
+        + currentUser.get("username");
+
     }
 
-    document.getElementById("username").value = currentUser.get("username") || "";
-    document.getElementById("bio").value = currentUser.get("bio") || "";
+
+
+    document.getElementById("username").value =
+    currentUser.get("username") || "";
+
+
+
+    document.getElementById("bio").value =
+    currentUser.get("bio") || "";
+
 
 });
 
-/* UPLOAD IMAGE */
-document.getElementById("fileInput").addEventListener("change", async function(e){
+
+
+
+
+document
+.getElementById("fileInput")
+.addEventListener(
+"change",
+async function(e){
+
 
     var file = e.target.files[0];
-    if(!file || !currentUser) return;
 
-    var parseFile = new Parse.File(file.name, file);
+
+    if(!file || !currentUser)
+    return;
+
+
+
+    var parseFile =
+    new Parse.File(
+        file.name,
+        file
+    );
+
+
+
     await parseFile.save();
 
-    currentUser.set("avatar", parseFile);
+
+
+    currentUser.set(
+        "avatar",
+        parseFile
+    );
+
+
+
     await currentUser.save();
 
-    document.getElementById("avatar").src = parseFile.url();
+
+
+    document
+    .getElementById("avatar")
+    .src =
+    parseFile.url();
+
 
 });
 
-/* SAVE PROFILE */
+
+
+
+
 async function saveProfile(){
 
-    if(!currentUser) return;
 
-    var username = document.getElementById("username").value;
-    var bio = document.getElementById("bio").value;
+    if(!currentUser)
+    return;
 
-    currentUser.set("username", username);
-    currentUser.set("bio", bio);
+
+
+    var username =
+    document.getElementById("username").value;
+
+
+
+    var bio =
+    document.getElementById("bio").value;
+
+
+
+    currentUser.set(
+        "username",
+        username
+    );
+
+
+
+    currentUser.set(
+        "bio",
+        bio
+    );
+
+
 
     await currentUser.save();
 
+
+
     alert("Profil mis à jour !");
+
+
 }
 
+
 </script>
-<script src="https://unpkg.com/parse/dist/parse.min.js"></script>
-<script src="/js/app.js"></script>
