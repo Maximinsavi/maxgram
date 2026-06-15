@@ -2,16 +2,21 @@
 
 <style>
 
+#maxgram-header {
+    font-family:"Segoe UI",Arial,sans-serif;
+}
+
+
 #maxgram-header .header {
+
+    position:fixed;
+    top:0;
+    left:0;
 
     width:100%;
     height:64px;
 
     background:white;
-
-    position:fixed;
-    top:0;
-    left:0;
 
     border-bottom:1px solid #ddd;
 
@@ -20,17 +25,21 @@
 }
 
 
+
 #maxgram-header table {
 
     width:100%;
     height:64px;
+    border-collapse:collapse;
 
 }
 
 
+
 #maxgram-header td {
 
-    padding:0 15px;
+    text-align:center;
+    vertical-align:middle;
 
 }
 
@@ -46,41 +55,27 @@
 
 
 
-#maxgram-header .nav {
-
-    display:flex;
-    justify-content:center;
-    gap:12px;
-
-}
-
-
-
-#maxgram-header .nav a {
-
-    width:44px;
-    height:44px;
+#maxgram-header .icon {
 
     display:flex;
     align-items:center;
     justify-content:center;
 
+    width:100%;
+    height:44px;
+
     border-radius:14px;
 
-    color:#555;
-
+    color:#333;
     text-decoration:none;
-
-    transition:.2s;
 
 }
 
 
 
-#maxgram-header .nav a:hover {
+#maxgram-header .icon:hover {
 
     background:#f0f2f5;
-    color:#1877f2;
 
 }
 
@@ -88,8 +83,8 @@
 
 #maxgram-header svg {
 
-    width:23px;
-    height:23px;
+    width:24px;
+    height:24px;
 
 }
 
@@ -102,7 +97,7 @@
 <tr>
 
 
-<td width="30%">
+<td width="20%">
 
 <div class="logo">
 MaxGram
@@ -112,89 +107,108 @@ MaxGram
 
 
 
-<td width="40%">
+<td width="16%">
 
-
-<div class="nav">
-
-
-
-<a href="/m/home.html">
+<a class="icon" href="/m/home.html">
 
 <svg viewBox="0 0 24 24" fill="none">
 
-<path d="M3 10.5L12 3l9 7.5V21"
+<path d="M4 11L12 4L20 11V20H15V15H9V20H4V11Z"
 stroke="currentColor"
 stroke-width="2"/>
 
 </svg>
 
 </a>
-
-
-
-
-
-<a href="/m/messages.html">
-
-<svg viewBox="0 0 24 24" fill="none">
-
-<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"
-stroke="currentColor"
-stroke-width="2"/>
-
-</svg>
-
-</a>
-
-
-
-
-
-<a href="/m/notifications.html">
-
-<svg viewBox="0 0 24 24" fill="none">
-
-<path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18"
-stroke="currentColor"
-stroke-width="2"/>
-
-</svg>
-
-</a>
-
-
-
-
-
-<a href="/m/menu.html">
-
-<svg viewBox="0 0 24 24" fill="none">
-
-<path d="M4 6h16M4 12h16M4 18h16"
-stroke="currentColor"
-stroke-width="2"/>
-
-</svg>
-
-</a>
-
-
-
-</div>
-
 
 </td>
 
 
 
-<td width="30%">
+<td width="16%">
+
+<a class="icon" href="/m/search.html">
+
+<svg viewBox="0 0 24 24" fill="none">
+
+<circle cx="11" cy="11" r="7"
+stroke="currentColor"
+stroke-width="2"/>
+
+<path d="M20 20L16 16"
+stroke="currentColor"
+stroke-width="2"/>
+
+</svg>
+
+</a>
 
 </td>
 
+
+
+
+<td width="16%">
+
+<a class="icon" href="/m/messages.html">
+
+<svg viewBox="0 0 24 24" fill="none">
+
+<path d="M21 15C21 17 19 19 17 19H8L3 22V7C3 5 5 3 7 3H17C19 3 21 5 21 7V15Z"
+
+stroke="currentColor"
+stroke-width="2"/>
+
+</svg>
+
+</a>
+
+</td>
+
+
+
+
+<td width="16%">
+
+<a class="icon" href="/m/notifications.html">
+
+<svg viewBox="0 0 24 24" fill="none">
+
+<path d="M18 9C18 5 15 3 12 3C9 3 6 5 6 9C6 15 4 16 4 18H20C20 16 18 15 18 9Z"
+
+stroke="currentColor"
+stroke-width="2"/>
+
+</svg>
+
+</a>
+
+</td>
+
+
+
+
+<td width="16%">
+
+<a class="icon" href="/m/menu.html">
+
+<svg viewBox="0 0 24 24" fill="none">
+
+<path d="M4 7H20M4 12H20M4 17H20"
+
+stroke="currentColor"
+stroke-width="2"
+stroke-linecap="round"/>
+
+</svg>
+
+</a>
+
+</td>
 
 
 </tr>
+
 
 </table>
 
