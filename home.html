@@ -5,109 +5,68 @@
 
 <style>
 
-html {
-    font-size: 18px;
-}
-
-body {
+body{
     margin:0;
-    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
-    background:#f5f6f8;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
 }
 
-/* HEADER FIXED */
-#app-header {
-
+/* HEADER */
+#app-header{
     position:fixed;
     top:0;
     left:0;
-
     width:100%;
     height:4.6rem;
-
     background:white;
-
     border-bottom:1px solid #e5e5e5;
-
     display:flex;
     align-items:center;
-
-    justify-content:space-between;
-
-    padding:0 0.8rem;
-
+    justify-content:space-around;
     z-index:9999;
-
 }
 
-/* LOGO */
-#app-header .logo {
-
-    font-size:1.35rem;
-    font-weight:800;
-    color:#1877f2;
-
-}
-
-/* NAV AREA */
-#app-header .nav {
-
-    display:flex;
-    justify-content:space-between;
-
-    width:70%;
-
-}
-
-/* BUTTONS */
-#app-header a {
-
-    width:2.8rem;
-    height:2.8rem;
-
+/* LINK BUTTON */
+#app-header a{
+    width:3rem;
+    height:3rem;
     display:flex;
     align-items:center;
     justify-content:center;
-
-    border-radius:0.8rem;
-
+    border-radius:0.9rem;
     text-decoration:none;
-
 }
 
-/* ACTIVE TOUCH EFFECT */
-#app-header a:active {
-    background:#f0f2f5;
+/* ACTIVE STATE */
+#app-header a.active svg{
+    stroke:#1877f2;
+    fill:none;
 }
 
-/* ICON SIZE FACEBOOK REAL */
-#app-header svg {
+#app-header a.active{
+    background:#eaf2ff;
+}
 
-    width:1.7rem;
-    height:1.7rem;
-
+/* DEFAULT ICON */
+#app-header svg{
+    width:1.8rem;
+    height:1.8rem;
     stroke:#1c1e21;
+    transition:0.2s;
+}
 
+/* TOUCH FEEL */
+#app-header a:active{
+    background:#f0f2f5;
 }
 
 </style>
 
 
 
-<!-- HEADER CONTENT -->
-
-<div class="logo">
-MaxGram
-</div>
-
-
-
-<div class="nav">
-
 <!-- HOME -->
-<a href="/m/home.html">
+<a href="/home.html" class="active">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M3 10L12 3L21 10V21H3Z" stroke-width="2"/>
+<path d="M4 10L12 3L20 10V21H14V14H10V21H4V10Z" stroke-width="2"/>
 </svg>
 </a>
 
@@ -126,7 +85,7 @@ MaxGram
 <!-- MESSAGES -->
 <a href="/m/messages.html">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M21 11C21 16 17 19 12 19H3V6H21Z" stroke-width="2"/>
+<path d="M21 12C21 17 17 20 12 20H3V6H21Z" stroke-width="2"/>
 </svg>
 </a>
 
@@ -144,10 +103,10 @@ MaxGram
 <!-- MENU -->
 <a href="/m/menu.html">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M4 7H20M4 12H20M4 17H20" stroke-width="2"/>
+<path d="M4 7H20M4 12H20M4 17H20" stroke-width="2" stroke-linecap="round"/>
 </svg>
 </a>
 
-</div>
+
 
 </div>
