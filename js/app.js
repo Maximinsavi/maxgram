@@ -1,3 +1,332 @@
-Parse.initialize("BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc", "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV");
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://unpkg.com/parse/dist/parse.min.js"></script>
+
+<script>
+Parse.initialize(
+    "BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc",
+    "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV"
+);
+
 Parse.serverURL = "https://parseapi.back4app.com";
-Parse.enableLocalDatastore();
+</script>
+
+
+<div id="profile-page">
+
+<style>
+
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+    background:#fafafa;
+}
+
+#profile-header{
+    height:50px;
+    background:white;
+    border-bottom:1px solid #ddd;
+    display:flex;
+    align-items:center;
+    padding:0 10px;
+}
+
+#back-btn{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+#back-btn:active{
+    background:#f0f2f5;
+}
+
+#title{
+    flex:1;
+    text-align:center;
+    font-weight:600;
+    margin-right:40px;
+}
+
+#profile-box{
+    background:white;
+    padding:20px;
+    text-align:center;
+}
+
+#profile-avatar{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    margin:auto;
+    overflow:hidden;
+    border:2px solid #eee;
+    cursor:pointer;
+}
+
+#profile-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+input, textarea{
+    width:90%;
+    margin-top:10px;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    font-size:14px;
+}
+
+button{
+    margin-top:10px;
+    padding:10px 14px;
+    border:none;
+    border-radius:10px;
+    background:#1877f2;
+    color:white;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+</style>
+
+
+<div id="profile-header">
+
+<div id="back-btn" onclick="history.back()">
+
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+<path d="M15 18l-6-6 6-6"
+stroke="black"
+stroke-width="2"/>
+</svg>
+
+</div>
+
+<div id="title">Profil</div>
+
+</div>
+
+
+<div id="profile-box">
+
+
+<div id="profile-avatar"
+onclick="document.getElementById('fileInput').click()">
+
+<img id="avatar">
+
+</div>
+
+
+<input 
+type="file"
+id="fileInput"
+style="display:none"
+accept="image/*">
+
+
+<input id="username" placeholder="Username">
+
+
+<textarea 
+id="bio"
+placeholder="Bio"></textarea>
+
+
+<button onclick="saveProfile()">
+Enregistrer
+</button>
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+var currentUser = null;
+
+
+
+async function checkUser(){
+
+    var user = await Parse.User.currentAsync();
+
+
+    if(!user || !user.id){
+
+        window.location.replace("/login.html");
+        return null;
+
+    }
+
+
+    await user.fetch();
+
+
+    return user;
+
+}
+
+
+
+document.addEventListener(
+"DOMContentLoaded",
+async function(){
+
+
+    currentUser = await checkUser();
+
+
+    if(!currentUser) return;
+
+
+
+    var avatar =
+    document.getElementById("avatar");
+
+
+
+    var file =
+    currentUser.get("avatar");
+
+
+
+    if(file){
+
+        avatar.src = file.url();
+
+    }else{
+
+        avatar.src =
+        "https://ui-avatars.com/api/?name="
+        + currentUser.get("username");
+
+    }
+
+
+
+    document.getElementById("username").value =
+    currentUser.get("username") || "";
+
+
+
+    document.getElementById("bio").value =
+    currentUser.get("bio") || "";
+
+
+});
+
+
+
+
+
+document
+.getElementById("fileInput")
+.addEventListener(
+"change",
+async function(e){
+
+
+    var file = e.target.files[0];
+
+
+    if(!file || !currentUser)
+    return;
+
+
+
+    var parseFile =
+    new Parse.File(
+        file.name,
+        file
+    );
+
+
+
+    await parseFile.save();
+
+
+
+    currentUser.set(
+        "avatar",
+        parseFile
+    );
+
+
+
+    await currentUser.save();
+
+
+
+    document
+    .getElementById("avatar")
+    .src =
+    parseFile.url();
+
+
+});
+
+
+
+
+
+async function saveProfile(){
+
+
+    if(!currentUser)
+    return;
+
+
+
+    var username =
+    document.getElementById("username").value;
+
+
+
+    var bio =
+    document.getElementById("bio").value;
+
+
+
+    currentUser.set(
+        "username",
+        username
+    );
+
+
+
+    currentUser.set(
+        "bio",
+        bio
+    );
+
+
+
+    await currentUser.save();
+
+
+
+    alert("Profil mis à jour !");
+
+
+}
+
+
+</script>
+
+
+<script src="/js/app.js"></script>
