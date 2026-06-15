@@ -1,86 +1,39 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login - MaxGram</title>
+<title>Login Google</title>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0f0f0f;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.box {
-    background: #1c1c1c;
-    padding: 30px;
-    border-radius: 12px;
-    width: 320px;
-    text-align: center;
-}
-
-h2 {
-    margin-bottom: 20px;
-}
-
-.info {
-    font-size: 12px;
-    color: #aaa;
-    margin-top: 10px;
-}
-</style>
 </head>
 
 <body>
 
-<div class="box">
-    <h2>MaxGram</h2>
+<h2>Connexion Google</h2>
 
-    <div id="g_id_onload"
-         data-client_id="https://422258767550-fqkv64t1ceo0o1f4phu7g47crb3vl5g2.apps.googleusercontent.com"
-         data-callback="handleGoogleLogin"
-         data-auto_prompt="false">
-    </div>
+<div id="g_id_onload"
+     data-client_id="https://422258767550-fqkv64t1ceo0o1f4phu7g47crb3vl5g2.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="false">
+</div>
 
-    <div class="g_id_signin"
-         data-type="standard"
-         data-size="large"
-         data-theme="outline"
-         data-text="sign_in_with"
-         data-shape="rectangular">
-    </div>
-
-    <div class="info">
-        Connexion sécurisée avec Google
-    </div>
+<div class="g_id_signin"
+     data-type="standard"
+     data-size="large">
 </div>
 
 <script>
-function handleGoogleLogin(response) {
+function handleCredentialResponse(response) {
+    console.log("JWT GOOGLE:", response.credential);
 
-    // Token JWT Google
-    const id_token = response.credential;
+    // TEST SIMPLE
+    alert("Login OK");
 
-    console.log("Google Token:", id_token);
-
-    // Ici tu peux :
-    // 1. envoyer vers Parse / backend
-    // 2. créer utilisateur automatiquement
-    // 3. rediriger vers dashboard
-
-    alert("Connexion Google réussie !");
-
-    // Exemple redirection
-    // window.location.href = "dashboard.html";
+    // Ici tu peux envoyer vers Parse ou ton backend
 }
 </script>
 
