@@ -5,38 +5,98 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login</title>
+<title>Inscription</title>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #f7f7f7, #e9f0ff);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Carte */
+.box {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 16px;
+    width: 340px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    animation: fadeIn 0.6s ease;
+}
+
+/* Titre */
+h2 {
+    margin-bottom: 10px;
+    color: #222;
+}
+
+/* Sous texte */
+p {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+/* Google button */
+.g_id_signin {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+/* animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
 
 </head>
 
 <body>
 
-<h2>Connexion avec Google</h2>
+<div class="box">
 
-<!-- GOOGLE LOGIN -->
-<div id="g_id_onload"
-     data-client_id="422258767550-fqkv64t1ceo0o1f4phu7g47crb3vl5g2.apps.googleusercontent.com"
-     data-callback="handleCredentialResponse"
-     data-auto_prompt="false">
-</div>
+    <h2>Créer un compte</h2>
 
-<div class="g_id_signin"
-     data-type="standard"
-     data-size="large">
+    <p>Inscris-toi rapidement avec Google</p>
+
+    <div id="g_id_onload"
+         data-client_id="422258767550-fqkv64t1ceo0o1f4phu7g47crb3vl5g2.apps.googleusercontent.com"
+         data-callback="handleRegister"
+         data-auto_prompt="false">
+    </div>
+
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="signup_with"
+         data-shape="rectangular">
+    </div>
+
 </div>
 
 <script>
-function handleCredentialResponse(response) {
+function handleRegister(response) {
 
-    // Token Google (JWT)
-    console.log("Google JWT:", response.credential);
-
-    // Optionnel: stocker le user
+    // Token Google
     localStorage.setItem("google_token", response.credential);
 
-    // Redirection vers home
+    // Redirection après inscription
     window.location.href = "/home.html";
 }
 </script>
