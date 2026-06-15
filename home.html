@@ -1,155 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MaxGram Home</title>
+
 <style>
+
 body {
-    margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
+    margin:0;
+    font-family:"Segoe UI",Arial,sans-serif;
+    background:#f5f6f8;
 }
+
 
 /* HEADER */
+
 .header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid #eaeaea;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    z-index: 100;
+    width:100%;
+    height:64px;
+    background:white;
+    position:sticky;
+    top:0;
+    border-bottom:1px solid #ddd;
+    z-index:10;
 }
 
-/* LEFT LOGO */
+
+.header td {
+    padding:0 15px;
+}
+
+
 .logo {
-    font-weight: 700;
-    font-size: 18px;
-    color: #2f6fff;
+    font-size:22px;
+    font-weight:700;
+    color:#1877f2;
 }
 
-/* CENTER NAV */
+
 .nav {
-    display: flex;
-    gap: 18px;
-    align-items: center;
+    display:flex;
+    justify-content:center;
+    gap:12px;
 }
 
-/* ICON BUTTON */
+
 .nav a {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: #555;
-    transition: 0.2s;
+    width:44px;
+    height:44px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:14px;
+    color:#555;
+    text-decoration:none;
+    transition:.2s;
 }
+
 
 .nav a:hover {
-    background: #f0f2f5;
-    color: #2f6fff;
+    background:#f0f2f5;
+    color:#1877f2;
 }
 
-.nav a.active {
-    background: #eaf1ff;
-    color: #2f6fff;
-}
-
-/* RIGHT MENU */
-.right {
-    display: flex;
-    gap: 10px;
-}
-
-/* small badge */
-.badge {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    background: red;
-    color: white;
-    font-size: 10px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* ICON WRAPPER */
-.icon-wrap {
-    position: relative;
-}
 
 svg {
-    width: 22px;
-    height: 22px;
+    width:23px;
+    height:23px;
 }
+
+
+
+/* PAGE */
+
+.content {
+    width:100%;
+}
+
+
+.block {
+
+    background:white;
+    margin:15px;
+    padding:20px;
+    border-radius:16px;
+
+    box-shadow:
+    0 2px 10px rgba(0,0,0,.04);
+
+}
+
+
+
+.block-title {
+
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:10px;
+
+}
+
+
+
+.info {
+
+    color:#555;
+    font-size:14px;
+
+}
+
+
+
+.action {
+
+    display:block;
+    margin-top:12px;
+    padding:12px;
+    border-radius:12px;
+
+    background:#1877f2;
+    color:white;
+    text-align:center;
+
+    text-decoration:none;
+}
+
+
+
+.grid {
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+
+}
+
+
+.card {
+
+    background:#f5f6f8;
+    padding:15px;
+    border-radius:12px;
+
+}
+
+
+.number {
+
+    font-size:22px;
+    font-weight:700;
+
+}
+
+
+
 </style>
 
-<div class="header">
 
-    <!-- LOGO -->
-    <div class="logo">MaxGram</div>
+</head>
 
-    <!-- NAV CENTER -->
-    <div class="nav">
 
-        <!-- HOME -->
-        <a href="/home.html" class="active">
-            <svg viewBox="0 0 24 24" fill="none">
-                <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"
-                      stroke="currentColor" stroke-width="2"/>
-            </svg>
-        </a>
+<body>
 
-        <!-- FRIENDS -->
-        <a href="/m/friends.html">
-            <svg viewBox="0 0 24 24" fill="none">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
-                      stroke="currentColor" stroke-width="2"/>
-                <circle cx="8.5" cy="7" r="3" stroke="currentColor" stroke-width="2"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"
-                      stroke="currentColor" stroke-width="2"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"
-                      stroke="currentColor" stroke-width="2"/>
-            </svg>
-        </a>
 
-        <!-- MESSAGES -->
-        <a href="/m/messages.html">
-            <svg viewBox="0 0 24 24" fill="none">
-                <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"
-                      stroke="currentColor" stroke-width="2"/>
-            </svg>
-        </a>
 
-        <!-- NOTIFICATIONS -->
-        <div class="icon-wrap">
-            <a href="/m/notifications.html">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"
-                          stroke="currentColor" stroke-width="2"/>
-                </svg>
-            </a>
-            <div class="badge">3</div>
-        </div>
+<!-- HEADER -->
 
-        <!-- MENU -->
-        <a href="/m/menu.html">
-            <svg viewBox="0 0 24 24" fill="none">
-                <path d="M4 6h16M4 12h16M4 18h16"
-                      stroke="currentColor" stroke-width="2"/>
-            </svg>
-        </a>
+<table class="header">
 
-    </div>
+<tr>
 
-    <!-- RIGHT -->
-    <div class="right">
-    </div>
+
+<td width="30%">
+<div class="logo">
+MaxGram
+</div>
+</td>
+
+
+
+<td width="40%">
+
+
+<div class="nav">
+
+
+<a href="/m/home.html">
+
+<svg viewBox="0 0 24 24" fill="none">
+
+<path d="M3 10.5L12 3l9 7.5V21"
+stroke="currentColor"
+stroke-width="2"/>
+
+</svg>
+
+</a>
+
+
+
+
+<a href="/m/messages.html">
+
+<svg viewBox="0 0 24 24" fill="none">
+
+<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"
+stroke="currentColor"
+stroke-width="2"/>
+
+</svg>
+
+</a>
+
+
+
+
+<a href="/m/notifications.html">
+
+<svg viewBox="0 0 24 24" fill="none">
+
+<path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18"
+stroke="currentColor"
+stroke-width="2"/>
+
+</svg>
+
+</a>
+
+
+
+
+<a href="/m/menu.html">
+
+<svg viewBox="0 0 24 24" fill="none">
+
+<path d="M4 6h16M4 12h16M4 18h16"
+stroke="currentColor"
+stroke-width="2"/>
+
+</svg>
+
+</a>
+
+
 
 </div>
+
+
+</td>
+
+
+<td width="30%">
+</td>
+
+
+</tr>
+
+</table>
+
+
+</div>
+
+
+
+</body>
+</html>
