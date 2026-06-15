@@ -1,63 +1,333 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
-<html lang="fr">
+<html class="no-js">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="/style.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Justinmind Prototyping Tool Sign up</title>
+
+    <meta name="description" content="Sign up to download and enjoy Justinmind Prototyping tool, which lets you create interactive and high-fidelity prototypes for web and mobile apps without code.">
+    <meta name="keywords" content="prototyping tool, sign up">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="preload" href="https://assets.justinmind.com/wp-content/themes/jim/volcanic/fonts/montserrat-v15-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://assets.justinmind.com/wp-content/themes/jim/volcanic/fonts/montserrat-v15-latin-500.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://assets.justinmind.com/wp-content/themes/jim/volcanic/fonts/montserrat-v15-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+
+    
+    	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WV4WFMD ');</script>
+    
+
+    <link rel="stylesheet" href="pages/css/login_new.css?v=83">
+    <link rel="stylesheet" href="pages/css/inputs.css?v=83">
+
+    
+      <link rel="shortcut icon" href="https://assets.justinmind.com/favicon.ico?v=83" />
+    
+    
+    
+    <script type="text/javascript" src="pages/javascript/jquery-packages-usernote-min.js?v=83"></script>
+    <script type="text/javascript" src="pages/javascript/login.js?v=83"></script>
+    <script type="text/javascript" src="pages/javascript/select2.min.js"></script>
+    <script type="text/javascript" src="pages/javascript/inputs.js?v=83"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcmG88ZAAAAALlHunQFGtyel9dmJXpvi3zxvXUe"></script>
+    
+    
+
 </head>
 
-<body>
 
-    <form id="registerForm">
-        <h2>Créer un compte</h2>
 
-        <input type="text" id="username" placeholder="Nom d'utilisateur" required>
+<body class="signin signup">
 
-        <input type="email" id="email" placeholder="Email" required>
 
-        <input type="password" id="password" placeholder="Mot de passe" required>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WV4WFMD " height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-        <button type="submit">S'inscrire</button>
 
-        <p id="message"></p>
-    </form>
 
-    <script>
-        var form = document.getElementById("registerForm");
-        var message = document.getElementById("message");
+<div class="logo">
+    <a href="https://www.justinmind.com"><img src="images/logos/justinmind-logo-top.svg" /></a>
+</div>
+<div class="smallBox " id="usernote-login">
+    
+	<h1>Create a free account</h1>
+	<h2>Already have an account? <a href="https://cloud.justinmind.com/usernote/toLogin.action">Sign in</a></h2>
+	
+	<form id="doSignUp" name="doSignUp" action="/usernote/doSignUp.action" method="post" class="submit-form">
+    <input type="hidden" name="struts.token.name" value="struts.token" />
+<input type="hidden" name="struts.token" value="GAEUN2L7EPN316HQLZS1E6633BPRZ06S" />
+    <input type="hidden" name="rt" value="" id="doSignUp_rt"/>
+    <input type="hidden" name="userBean.id" value="10000000831124220" id="doSignUp_userBean_id"/>
+    <input type="hidden" name="userBean.hasPicture" value="false" id="doSignUp_userBean_hasPicture"/>
+    <input type="hidden" name="userBean.doNotUseGravatar" value="false" id="doSignUp_userBean_doNotUseGravatar"/>
+    <input type="hidden" name="origin" value="" id="doSignUp_origin"/>
+    <input type="hidden" name="w" value="true" id="doSignUp_w"/>
+    <input type="hidden" name="reToken" value="" id="doSignUp_reToken"/>
+    
+    
+        <div id="googleDiv" data-src="signup">
+            <div>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="LgbsSe-Bz112c"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
+            </div>
+            <span>Sign up with Google</span>
+        </div>
+        
+      	<div class="orDiv">
+      		<div class="orSeparator"></div>
+      		<p class="haveAccount">or</p>
+      		<div class="orSeparator"></div>
+      	</div>
+      	
+    
+    
+    <div class="space">
+    <input type="text" name="userBean.name" value="" id="name" class="input-name adaptive" placeholder="Your name (optional)"/>
+    </div>
+    
+    <div class="space">
+    <input type="text" name="userBean.email" value="" id="email" class="input-email adaptive" placeholder="Email address"/>
+    </div>
+    
+    <div>
+    	<div id="password-popup">
+			<svg xmlns="http://www.w3.org/2000/svg" width="280" height="177" viewBox="405 185 282 177" preserveAspectRatio="none">
+				<g>
+					<defs>
+						<path id="s-Path_17-d1224" d="M643.2719841003418 196.92892456054688 L633.1298332214355 207.07107543945312 L413.1637992858887 207.07107543945312 C411.5180473327637 207.07107543945312 410.1637992858887 208.42532348632812 410.1637992858887 210.07107543945312 L410.1637992858887 356.0710754394531 C410.1637992858887 357.7168273925781 411.5180473327637 359.0710754394531 413.1637992858887 359.0710754394531 L674.380199432373 359.0710754394531 C676.025951385498 359.0710754394531 677.380199432373 357.7168273925781 677.380199432373 356.0710754394531 L677.380199432373 210.07107543945312 C677.380199432373 208.42532348632812 676.025951385498 207.07107543945312 674.380199432373 207.07107543945312 L653.414134979248 207.07107543945312 L643.2719841003418 196.92892456054688 Z "></path>
+						<filter filterUnits="userSpaceOnUse" x="407.1637992858887" y="193.92892456054688" width="273.2164001464844" height="168.14215087890625" color-interpolation-filters="sRGB" id="s-Path_17-d1224_effects">
+							<feOffset dx="1.8369701987210297E-16" dy="-1.0" input="SourceAlpha"></feOffset>
+							<feGaussianBlur result="DROP_SHADOW_0_blur" stdDeviation="3"></feGaussianBlur>
+							<feFlood flood-color="#B8B8B8" flood-opacity="0.6"></feFlood>
+							<feComposite operator="in" in2="DROP_SHADOW_0_blur"></feComposite>
+							<feComposite in="SourceGraphic" result="DROP_SHADOW_0"></feComposite>
+						</filter>
+					</defs>
+					<g transform="rotate(180.0 543.7719993591309 278.0)" style="mix-blend-mode:normal" filter="url(#s-Path_17-d1224_effects)">
+						<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#s-Path_17-d1224" fill="#FFFFFF" fill-opacity="1.0"></use>
+					</g>
+				</g>
+			</svg>
+		    <div class="popup-content" style="position: absolute;top: 18px;left: 33px;">
+		        <p class="popup-title">Password must include at least:</p>
+		        <div class="condition NONE" id="lowercase-condition">
+		            <div class="condition-image"></div>
+		            <p>One lowercase character</p>
+		        </div>
+		        <div class="condition NONE" id="uppercase-condition">
+		            <div class="condition-image"></div>
+		            <p>One uppercase character</p>
+		        </div>
+		        <div class="condition NONE" id="number-condition">
+		            <div class="condition-image"></div>
+		            <p>One number</p>
+		        </div>
+		        <div class="condition NONE" id="minimum-condition">
+		            <div class="condition-image"></div>
+		            <p>8 characters minimum</p>
+		        </div>
+		    </div>
+		</div>
+      <input type="password" name="userBean.password" id="password" class="input-pass adaptive eye" autocomplete="new-password" placeholder="Password"/>
+    </div>
+ 
+    <div>
+      <input type="text" name="userBean.passwordRepeat" value="" id="passwordRepeat" class="input-repeatPass" placeholder="Repeat Password"/>
+    </div>  
+ 
+    <div class="submit-form">       
+      	<button class="regButton button" href="#" id="get-started-button">Sign up</button>
+    </div>
+    
+    <div class="policy-box">
+    	<p class="clickAcceptsTerms">By signing up to create an account, you are accepting our terms of service and privacy policy</p>
+    </div>
+  </form>
 
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
 
-            fetch("/api/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    username: username.value,
-                    email: email.value,
-                    password: password.value
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                message.innerText = data.message;
 
-                if (data.success) {
-                    message.style.color = "green";
-                    form.reset();
-                } else {
-                    message.style.color = "red";
-                }
-            })
-            .catch(() => {
-                message.innerText = "Erreur serveur";
-                message.style.color = "red";
-            });
-        });
-    </script>
+        
+
+<script>
+  var google_client_id= 'https://422258767550-fqkv64t1ceo0o1f4phu7g47crb3vl5g2.apps.googleusercontent.com';
+  var domain = 'https://maxgram-chi.vercel.app';
+  
+  $(window).resize(function() {
+    if ($("#password-popup").is(":visible")) {
+      $("#password-popup").css({
+	      top: $("#password").offset().top - $("#password-popup").outerHeight() - 4,
+	      left: $("#password").offset().left - 20.5
+      });
+    }
+  });
+  
+  $("#password").on("focus", function() {
+  	$("#password-popup").css({
+      top: $("#password").offset().top - $("#password-popup").outerHeight() - 4,
+      left: $("#password").offset().left - 20.5
+    }).show();
+  });
+  
+  $("#password").on("focusout", function() {
+  	$("#password-popup").hide();
+  	validatePassword();
+  });
+  
+  $("#password").on("input", function() {
+	validatePassword();
+  });
+  
+  $("#email").on("focusout", function() {
+  	validateEmail();
+  });
+  
+  function validateEmail() {
+  	const email = $("#email").val();
+  	
+  	if (email.length == 0) {
+		addError($("#email"), "Email required");
+		return;
+	}
+
+	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+		addError($("#email"), "Invalid format. Please enter a valid email address");
+		return;
+	}
+	
+	hideError($("#email"));
+  }
+  
+  function validatePassword() {
+  	const password = $("#password").val();
+  	const email = $("#email").val();
+  	
+  	var isLower = checkAndSetCondition(password, ".*[a-z].*", $("#lowercase-condition"));
+	var isUpper = checkAndSetCondition(password, ".*[A-Z].*", $("#uppercase-condition"));
+	var isNumber = checkAndSetCondition(password, ".*[0-9].*", $("#number-condition"));
+	var isLength = checkAndSetCondition(password, ".{8,}", $("#minimum-condition"));
+	
+	if (password.length == 0) {
+		addError($("#password"), "Password required");
+		return;
+	}
+	if (!isLower || !isUpper || !isNumber || !isLength) {
+		addError($("#password"), "Passwords must meet all the requirements");
+		return;
+	}
+	if (email == password) {
+		addError($("#password"), "Password can't be the same as the email");
+		return;
+	}
+	
+	hideError($("#password"));
+  }
+  
+  function checkAndSetCondition(text, conditionExpression, element) {
+  	$(element).removeClass("NONE").removeClass("PASS").removeClass("FAIL");
+  	if (new RegExp(conditionExpression).test(text)) {
+  		$(element).addClass("PASS");
+  		return true;
+  	}
+  	else {
+  		$(element).addClass("FAIL");
+  		return false;
+  	}
+  };
+  
+  function addError(element, text) {
+  	$(element).addClass("errorInput");
+  	if ($(element).parent().find(".error").length == 0)
+		$(element).parent().append($("<div class='error'>" + text + "</div>"));
+  }
+  
+  function hideError(element) {
+	$(element).removeClass("errorInput");
+  	$(element).parent().find(".error").remove();
+  }
+
+  function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0)==' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  };
+
+  function getAnalyticsData() {
+    var data = {
+        url: $("#usernote-login input[name='url']").val(),
+        username: $("#usernote-login #email").val(),
+        password: $("#usernote-login #password").val(),
+        rememberMe: $("#rememberMe").val(),
+        "struts.token.name": "token",
+        token: $("#usernote-login input[name='token']").val(),
+        fromPurchase: true,
+        period: $("input[name=period]:checked").val(),
+        edition: $("input[name=edition]").val(),
+        operation: $("input[name=operation]").val(),
+        reToken: $("input[name=reToken]").val()
+    };
+
+    var existingCookie = readCookie("jim");
+    
+    var source, medium, campaign, term, content, gclid;
+    if(existingCookie){
+      if (typeof existingCookie === 'string' || existingCookie instanceof String){
+        if(existingCookie.slice(-1)==="\""){
+            existingCookie = existingCookie.slice(0, -1);
+        }
+        source = readValueFromPairList(existingCookie, "source", "|");
+        medium = readValueFromPairList(existingCookie, "medium", "|");
+        campaign = readValueFromPairList(existingCookie, "campaign", "|");
+        term = readValueFromPairList(existingCookie, "term", "|").replace(/\+/g," ");
+        content = readValueFromPairList(existingCookie, "content", "|");
+        gclid = readValueFromPairList(existingCookie, "gclid", "|");
+      }
+    }
+
+    var extraData = {};
+    if(existingCookie) {
+        extraData = {
+            campaignSource:     source,
+            campaignMedium:     medium,
+            campaignKeyword:    term,
+            campaignContent:    content,
+            campaignId:         campaign,
+            adwordsID:          gclid
+        };
+    }
+    return $.extend(data, extraData);
+  }
+</script>        
+
+</div>
+
 
 </body>
 </html>
+
