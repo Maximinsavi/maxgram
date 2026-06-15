@@ -1,5 +1,6 @@
 <script src="/header.js"></script>
 
+
 <div id="composer-box">
 
 <style>
@@ -20,7 +21,7 @@
     height:44px;
     border-radius:50%;
     overflow:hidden;
-    background:#e5e5e5;
+    background:#ddd;
     flex-shrink:0;
 }
 
@@ -37,7 +38,6 @@
     border-radius:22px;
     padding:12px 14px;
     font-size:14px;
-    color:#555;
     cursor:pointer;
     transition:0.15s;
 }
@@ -50,7 +50,7 @@
 </style>
 
 <div id="composer-avatar">
-    <img id="userAvatar" src="" alt="profile">
+    <img id="userAvatar">
 </div>
 
 <input id="composer-input"
@@ -64,26 +64,30 @@ onclick="location.href='/m/publier.html'">
 <script>
 document.addEventListener("DOMContentLoaded", function(){
 
-    var user = Parse.User.current();
-
     var avatar = document.getElementById("userAvatar");
 
-    // fallback image (si pas de photo)
-    var defaultAvatar = "https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128";
+    var defaultAvatar =
+    "https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128";
 
-    if(user){
+    var user = Parse.User.current();
 
-        var file = user.get("avatar"); // champ Back4App (File)
+    if(user && user.get("avatar")){
 
-        if(file && file.url){
-            avatar.src = file.url();
-        } else {
-            avatar.src = defaultAvatar;
-        }
+        avatar.src = user.get("avatar").url();
 
     } else {
+
         avatar.src = defaultAvatar;
+
     }
 
 });
+</script>
+
+
+<script src="https://unpkg.com/parse/dist/parse.min.js"></script>
+
+<script>
+Parse.initialize("BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc", "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV");
+Parse.serverURL = "https://parseapi.back4app.com";
 </script>
