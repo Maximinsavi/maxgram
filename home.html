@@ -5,7 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Home - Maximin</title>
+<title>Home</title>
+
+<script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
 
 <style>
 body {
@@ -16,11 +18,8 @@ body {
 
 /* HEADER */
 header {
-    position: fixed;
-    top: 0;
-    width: 100%;
     height: 60px;
-    background: #fff;
+    background: white;
     border-bottom: 1px solid #eaeaea;
     display: flex;
     align-items: center;
@@ -28,59 +27,22 @@ header {
     font-weight: 600;
 }
 
-/* CONTAINER */
+/* CONTENT */
 .container {
-    margin-top: 90px;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+    padding: 40px 20px;
+    max-width: 600px;
+    margin: auto;
 }
 
-/* CARD */
 .card {
-    width: 420px;
-    background: #fff;
-    border-radius: 14px;
+    background: white;
     padding: 20px;
+    border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-/* SECTIONS */
-.section {
-    margin-bottom: 20px;
-}
-
-.title {
-    font-size: 13px;
-    color: #777;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.box {
-    padding: 12px;
-    background: #f3f5f9;
-    border-radius: 10px;
-    font-size: 14px;
-    color: #222;
-}
-
-/* BOT BUTTON */
-.bot-link {
-    display: block;
-    text-align: center;
-    padding: 12px;
-    border-radius: 10px;
-    background: #2f6fff;
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    margin-top: 10px;
-}
-
-.bot-link:hover {
-    background: #2457d6;
+.hidden {
+    display: none;
 }
 </style>
 
@@ -89,48 +51,50 @@ header {
 <body>
 
 <header>
-    Dashboard Maximin
+    Home
 </header>
 
-<div class="container">
+<div class="container hidden" id="content">
 
     <div class="card">
 
-        <!-- SECTION 1 -->
-        <div class="section">
-            <div class="title">Informations personnelles</div>
-            <div class="box">
-                Nom : Maximin<br>
-                Statut : Administrateur<br>
-                Projet : MaxGram / MaxChat
-            </div>
-        </div>
+        <h2>Bienvenue</h2>
 
-        <!-- SECTION 2 -->
-        <div class="section">
-            <div class="title">Projet actif</div>
-            <div class="box">
-                MaxGram - Réseau social<br>
-                MaxChat - Bot IA
-            </div>
-        </div>
+        <p id="userInfo">Chargement...</p>
 
-        <!-- SECTION 3 -->
-        <div class="section">
-            <div class="title">Accès bot</div>
-
-            <div class="box">
-                Accéder à mon assistant intelligent
-            </div>
-
-            <a class="bot-link" href="/api/maxchat.html">
-                Ouvrir MaxChat
-            </a>
-        </div>
+        <button onclick="logout()">Se déconnecter</button>
 
     </div>
 
 </div>
+
+<script>
+
+// INIT PARSE
+Parse.initialize("BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc", "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV");
+Parse.serverURL = "https://parseapi.back4app.com";
+
+/* CHECK USER LOGIN */
+const user = Parse.User.current();
+
+if (!user) {
+    window.location.href = "/login.html";
+} else {
+
+    document.getElementById("content").classList.remove("hidden");
+
+    document.getElementById("userInfo").innerHTML =
+        "Utilisateur : " + user.get("username") + "<br>Email : " + user.get("email");
+}
+
+/* LOGOUT */
+function logout() {
+    Parse.User.logOut().then(() => {
+        window.location.href = "/login.html";
+    });
+}
+
+</script>
 
 </body>
 </html>
