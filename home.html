@@ -1,114 +1,98 @@
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <title>Magram</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0f0f1a;
-      color: white;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    table {
-      border-collapse: collapse;
-      height: 100vh;
-      width: 100%;
-    }
+<title>Home</title>
 
-    .hero {
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      text-align: center;
-      padding: 60px 20px;
-    }
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #f7f7f7, #e9f0ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-    .title {
-      font-size: 60px;
-      margin: 0;
-      letter-spacing: 2px;
-    }
+/* Carte */
+.box {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    width: 360px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
 
-    .subtitle {
-      opacity: 0.8;
-      font-size: 18px;
-      margin-top: 10px;
-    }
+/* Avatar */
+img {
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+}
 
-    .btn {
-      margin-top: 20px;
-      padding: 15px 25px;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      font-weight: bold;
-      background: white;
-      color: black;
-    }
+/* Bouton */
+button {
+    margin-top: 20px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #ff4d4d;
+    color: white;
+    cursor: pointer;
+}
 
-    .section {
-      padding: 40px 20px;
-      text-align: center;
-    }
+button:hover {
+    background: #e63c3c;
+}
+</style>
 
-    .card {
-      background: #1c1c2e;
-      padding: 20px;
-      border-radius: 15px;
-      margin: 10px;
-      display: inline-block;
-    }
-
-    .footer {
-      text-align: center;
-      padding: 20px;
-      opacity: 0.6;
-      font-size: 14px;
-    }
-  </style>
 </head>
 
 <body>
 
-<table>
+<div class="box">
 
-  <!-- HERO -->
-  <tr>
-    <td class="hero">
-      <h1 class="title">Magram</h1>
-      <div class="subtitle">Partage. Inspire. Connecte.</div>
-      <button class="btn">Commencer</button>
-    </td>
-  </tr>
+    <img id="avatar" src="" alt="user">
 
-  <!-- FEATURES -->
-  <tr>
-    <td class="section">
-      <h2>Pourquoi Magram ?</h2>
+    <h2 id="name">Chargement...</h2>
 
-      <div class="card">🔥 Rapide et fluide</div>
-      <div class="card">📸 Feed intelligent</div>
-      <div class="card">🌍 Communauté mondiale</div>
-    </td>
-  </tr>
+    <p id="email"></p>
 
-  <!-- ABOUT -->
-  <tr>
-    <td class="section">
-      <h2>Une nouvelle génération de réseau social</h2>
-      <p style="opacity:0.7;">
-        Magram est conçu pour connecter les gens de manière simple et moderne.
-      </p>
-    </td>
-  </tr>
+    <button onclick="logout()">Se déconnecter</button>
 
-  <!-- FOOTER -->
-  <tr>
-    <td class="footer">
-      © 2026 Magram - All rights reserved
-    </td>
-  </tr>
+</div>
 
-</table>
+<script>
+function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(atob(base64));
+}
+
+const token = localStorage.getItem("google_token");
+
+if (!token) {
+    window.location.href = "/index.html";
+} else {
+
+    const user = parseJwt(token);
+
+    document.getElementById("name").innerText = user.name;
+    document.getElementById("email").innerText = user.email;
+    document.getElementById("avatar").src = user.picture;
+}
+
+function logout() {
+    localStorage.removeItem("google_token");
+    window.location.href = "/index.html";
+}
+</script>
 
 </body>
 </html>
