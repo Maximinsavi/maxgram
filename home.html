@@ -1,1 +1,89 @@
 <script src="/header.js"></script>
+
+<div id="composer-box">
+
+<style>
+
+#composer-box{
+    width:100%;
+    background:white;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    border-bottom:1px solid #e5e5e5;
+    box-sizing:border-box;
+}
+
+#composer-avatar{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#e5e5e5;
+    flex-shrink:0;
+}
+
+#composer-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+#composer-input{
+    flex:1;
+    background:#f0f2f5;
+    border:none;
+    border-radius:22px;
+    padding:12px 14px;
+    font-size:14px;
+    color:#555;
+    cursor:pointer;
+    transition:0.15s;
+}
+
+#composer-input:active{
+    transform:scale(0.98);
+    background:#e4e6ea;
+}
+
+</style>
+
+<div id="composer-avatar">
+    <img id="userAvatar" src="" alt="profile">
+</div>
+
+<input id="composer-input"
+type="text"
+readonly
+placeholder="Quoi de neuf ?"
+onclick="location.href='/m/publier.html'">
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    var user = Parse.User.current();
+
+    var avatar = document.getElementById("userAvatar");
+
+    // fallback image (si pas de photo)
+    var defaultAvatar = "https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128";
+
+    if(user){
+
+        var file = user.get("avatar"); // champ Back4App (File)
+
+        if(file && file.url){
+            avatar.src = file.url();
+        } else {
+            avatar.src = defaultAvatar;
+        }
+
+    } else {
+        avatar.src = defaultAvatar;
+    }
+
+});
+</script>
