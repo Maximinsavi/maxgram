@@ -1,89 +1,151 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inscription</title>
+
+<title>Créer un compte</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
-
 body {
-margin:0;
-font-family:Arial;
-background:#f6f7fb;
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f6f7fb;
 }
 
+/* HEADER */
+header {
+    height: 60px;
+    background: white;
+    border-bottom: 1px solid #eaeaea;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-weight: 600;
+}
+
+/* PAGE */
 .wrapper {
-max-width:450px;
-margin:auto;
-padding:40px 20px;
+    max-width: 520px;
+    padding: 40px 20px;
 }
 
-input, button {
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:8px;
-border:1px solid #ddd;
+/* TITLE */
+h2 {
+    margin: 0;
+    font-size: 24px;
 }
 
+.subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* FORM */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+input {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    background: white;
+}
+
+input:focus {
+    border-color: #2f6fff;
+}
+
+/* BUTTON */
 button {
-background:#2f6fff;
-color:white;
-border:none;
-cursor:pointer;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #2f6fff;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
 }
 
 button:hover {
-background:#2457d6;
+    background: #2457d6;
 }
 
+/* LINK */
 .link {
-margin-top:15px;
-font-size:13px;
-text-align:center;
+    margin-top: 15px;
+    font-size: 13px;
+    color: #555;
 }
 
+.link a {
+    color: #2f6fff;
+    text-decoration: none;
+}
+
+/* TOAST */
 .toast {
-position:fixed;
-top:20px;
-right:20px;
-background:#333;
-color:white;
-padding:10px 15px;
-border-radius:10px;
-opacity:0;
-transition:0.3s;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: 0.3s;
+    z-index: 999;
 }
 
 .toast.show {
-opacity:1;
+    opacity: 1;
+    transform: translateY(0);
 }
 
+.toast.success {
+    background: #22c55e;
+}
+
+.toast.error {
+    background: #ef4444;
+}
 </style>
 
 </head>
 
 <body>
 
+<header>
+    MaxGram - Inscription
+</header>
+
 <div class="wrapper">
 
-<h2>Créer un compte</h2>
+    <h2>Créer un compte</h2>
+    <div class="subtitle">Rejoins MaxGram en quelques secondes</div>
 
-<form onsubmit="register(event)">
+    <form onsubmit="register(event)">
 
-<input id="email" type="email" placeholder="Email" required>
-<input id="password" type="password" placeholder="Mot de passe" required>
+        <input id="username" placeholder="Nom d'utilisateur" required>
+        <input id="email" type="email" placeholder="Email" required>
+        <input id="password" type="password" placeholder="Mot de passe" required>
 
-<button>Créer un compte</button>
+        <button type="submit">Créer un compte</button>
 
-</form>
+    </form>
 
-<div class="link">
-Déjà un compte ? <a href="/login.html">Connexion</a>
-</div>
+    <div class="link">
+        Déjà un compte ? <a href="/login.html">Se connecter</a>
+    </div>
 
 </div>
 
@@ -91,42 +153,69 @@ Déjà un compte ? <a href="/login.html">Connexion</a>
 
 <script>
 
+/* SUPABASE INIT */
 var supabaseUrl = "https://zcckclyeqawcaclzmabj.supabase.co";
 var supabaseKey = "sb_publishable_Vj1M_Jkv68n4EXuMmzjNow_RI05o_jh";
 
 var supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-function showToast(msg){
-var t = document.getElementById("toast");
-t.innerText = msg;
-t.className = "toast show";
-setTimeout(()=>t.className="toast",2000);
+/* CHECK USER */
+async function checkUser(){
+    var { data } = await supabase.auth.getUser();
+
+    if(data && data.user){
+        window.location.href = "/home.html";
+    }
 }
 
-async function register(e){
-e.preventDefault();
+checkUser();
 
-var email = document.getElementById("email").value;
-var password = document.getElementById("password").value;
+/* TOAST */
+function showToast(message, type) {
 
-var { data, error } = await supabase.auth.signUp({
-email: email,
-password: password,
-options: {
-emailRedirectTo: window.location.origin + "/home.html"
-}
-});
+    var toast = document.getElementById("toast");
 
-if(error){
-showToast(error.message);
-return;
+    toast.className = "toast show " + type;
+    toast.innerText = message;
+
+    setTimeout(function () {
+        toast.className = "toast";
+    }, 3000);
+
 }
 
-showToast("Vérifie ton email 📩");
+/* REGISTER (NO EMAIL CHECK FLOW) */
+async function register(e) {
 
-setTimeout(()=>{
-window.location.href="/check-email.html";
-},1200);
+    e.preventDefault();
+
+    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+
+    var { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        showToast(error.message, "error");
+        return;
+    }
+
+    /* créer profil directement */
+    var user = data.user;
+
+    await supabase.from("profiles").insert({
+        id: user.id,
+        username: username
+    });
+
+    showToast("Compte créé avec succès", "success");
+
+    setTimeout(function () {
+        window.location.href = "/home.html";
+    }, 1200);
 
 }
 
