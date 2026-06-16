@@ -1,117 +1,65 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Créer un compte</title>
+<title>Inscription</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
 
 body {
-    margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: #f6f7fb;
-}
-
-header {
-    height: 60px;
-    background: white;
-    border-bottom: 1px solid #eaeaea;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    font-weight: 600;
+margin:0;
+font-family:Arial;
+background:#f6f7fb;
 }
 
 .wrapper {
-    max-width: 520px;
-    padding: 40px 20px;
+max-width:450px;
+margin:auto;
+padding:40px 20px;
 }
 
-h2 {
-    margin: 0;
-    font-size: 24px;
-}
-
-.subtitle {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 25px;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-input {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    outline: none;
-}
-
-input:focus {
-    border-color: #2f6fff;
+input, button {
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ddd;
 }
 
 button {
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: #2f6fff;
-    color: white;
-    cursor: pointer;
-    font-weight: 500;
+background:#2f6fff;
+color:white;
+border:none;
+cursor:pointer;
 }
 
 button:hover {
-    background: #2457d6;
+background:#2457d6;
 }
 
 .link {
-    margin-top: 15px;
-    font-size: 13px;
-    color: #555;
-    text-align: center;
+margin-top:15px;
+font-size:13px;
+text-align:center;
 }
 
-.link a {
-    color: #2f6fff;
-    text-decoration: none;
-}
-
-/* TOAST */
 .toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 12px 16px;
-    border-radius: 10px;
-    color: white;
-    font-size: 14px;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: 0.3s;
-    z-index: 999;
+position:fixed;
+top:20px;
+right:20px;
+background:#333;
+color:white;
+padding:10px 15px;
+border-radius:10px;
+opacity:0;
+transition:0.3s;
 }
 
 .toast.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.toast.success {
-    background: #22c55e;
-}
-
-.toast.error {
-    background: #ef4444;
+opacity:1;
 }
 
 </style>
@@ -120,28 +68,22 @@ button:hover {
 
 <body>
 
-<header>
-    MaxGram - Inscription
-</header>
-
 <div class="wrapper">
 
-    <h2>Créer un compte</h2>
-    <div class="subtitle">Rejoins MaxGram en quelques secondes</div>
+<h2>Créer un compte</h2>
 
-    <form onsubmit="register(event)">
+<form onsubmit="register(event)">
 
-        <input id="username" placeholder="Nom d'utilisateur" required>
-        <input id="email" type="email" placeholder="Email" required>
-        <input id="password" type="password" placeholder="Mot de passe" required>
+<input id="email" type="email" placeholder="Email" required>
+<input id="password" type="password" placeholder="Mot de passe" required>
 
-        <button type="submit">Créer un compte</button>
+<button>Créer un compte</button>
 
-    </form>
+</form>
 
-    <div class="link">
-        Déjà un compte ? <a href="/login.html">Se connecter</a>
-    </div>
+<div class="link">
+Déjà un compte ? <a href="/login.html">Connexion</a>
+</div>
 
 </div>
 
@@ -149,61 +91,42 @@ button:hover {
 
 <script>
 
-/* SUPABASE INIT */
 var supabaseUrl = "https://zcckclyeqawcaclzmabj.supabase.co";
 var supabaseKey = "sb_publishable_Vj1M_Jkv68n4EXuMmzjNow_RI05o_jh";
 
 var supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* CHECK USER */
-async function checkUser(){
-    var { data } = await supabase.auth.getUser();
-
-    if(data && data.user){
-        window.location.href = "/home.html";
-    }
+function showToast(msg){
+var t = document.getElementById("toast");
+t.innerText = msg;
+t.className = "toast show";
+setTimeout(()=>t.className="toast",2000);
 }
 
-checkUser();
+async function register(e){
+e.preventDefault();
 
-/* TOAST */
-function showToast(message, type) {
+var email = document.getElementById("email").value;
+var password = document.getElementById("password").value;
 
-    var toast = document.getElementById("toast");
+var { data, error } = await supabase.auth.signUp({
+email: email,
+password: password,
+options: {
+emailRedirectTo: window.location.origin + "/home.html"
+}
+});
 
-    toast.className = "toast show " + type;
-    toast.innerText = message;
-
-    setTimeout(function () {
-        toast.className = "toast";
-    }, 3000);
-
+if(error){
+showToast(error.message);
+return;
 }
 
-/* REGISTER */
-async function register(e) {
+showToast("Vérifie ton email 📩");
 
-    e.preventDefault();
-
-    var username = document.getElementById("username").value;
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-
-    var { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password
-    });
-
-    if (error) {
-        showToast(error.message, "error");
-        return;
-    }
-
-    showToast("Compte créé avec succès", "success");
-
-    setTimeout(function () {
-        window.location.href = "/home.html";
-    }, 1200);
+setTimeout(()=>{
+window.location.href="/check-email.html";
+},1200);
 
 }
 
