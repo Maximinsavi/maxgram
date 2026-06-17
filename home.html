@@ -49,9 +49,11 @@
 
 </style>
 
+
 <div id="composer-avatar">
     <img id="userAvatar">
 </div>
+
 
 <input id="composer-input"
 type="text"
@@ -59,35 +61,82 @@ readonly
 placeholder="Quoi de neuf ?"
 onclick="location.href='/m/publier.html'">
 
+
 </div>
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+
+var supabaseUrl = "https://zcckclyeqawcaclzmabj.supabase.co";
+
+var supabaseKey = "sb_publishable_Vj1M_Jkv68n4EXuMmzjNow_RI05o_jh";
+
+
+var supabaseClient = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
+
+
+
+document.addEventListener("DOMContentLoaded", async function(){
+
 
     var avatar = document.getElementById("userAvatar");
+
 
     var defaultAvatar =
     "https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128";
 
-    var user = Parse.User.current();
 
-    if(user && user.get("avatar")){
 
-        avatar.src = user.get("avatar").url();
+    var result = await supabaseClient.auth.getSession();
 
-    } else {
+
+    var session = result.data.session;
+
+
+
+    if(session){
+
+
+        var userId = session.user.id;
+
+
+
+        var profile = await supabaseClient
+        .from("profiles")
+        .select("avatar")
+        .eq("id", userId)
+        .single();
+
+
+
+        if(profile.data && profile.data.avatar){
+
+            avatar.src = profile.data.avatar;
+
+        }else{
+
+            avatar.src = defaultAvatar;
+
+        }
+
+
+    }else{
+
 
         avatar.src = defaultAvatar;
 
+
     }
 
+
 });
-</script>
 
 
-<script src="https://unpkg.com/parse/dist/parse.min.js"></script>
-
-<script>
-Parse.initialize("BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc", "88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV");
-Parse.serverURL = "https://parseapi.back4app.com";
 </script>
