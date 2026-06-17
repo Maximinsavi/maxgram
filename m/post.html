@@ -1,16 +1,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="https://unpkg.com/parse/dist/parse.min.js"></script>
 
-<script>
-Parse.initialize(
-"BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc",
-"88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV"
-);
-
-Parse.serverURL = "https://parseapi.back4app.com";
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
 <style>
@@ -133,95 +125,119 @@ Créer un post
 </div>
 
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 
 <script>
 
+var supabaseUrl = "https://zcckclyeqawcaclzmabj.supabase.co";
+var supabaseKey = "sb_publishable_Vj1M_Jkv68n4EXuMmzjNow_RI05o_jh";
+
+var supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
 var currentUser = null;
 var selectedFile = null;
 
 
+/* INIT */
 async function init(){
 
-currentUser = await Parse.User.currentAsync();
+    var { data: { session } } = await supabase.auth.getSession();
 
-if(!currentUser){
-location.replace("login.html");
-return;
+    if(!session){
+        location.replace("login.html");
+        return;
+    }
+
+    currentUser = session.user;
 }
 
-}
+init();
 
 
+/* PREVIEW */
 document.getElementById("file").addEventListener("change", function(e){
 
-selectedFile = e.target.files[0];
+    selectedFile = e.target.files[0];
+    if(!selectedFile) return;
 
-if(!selectedFile) return;
+    var reader = new FileReader();
 
-var reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById("preview").innerHTML =
+        '<img src="' + reader.result + '">';
+    };
 
-reader.onload = function(){
-
-document.getElementById("preview").innerHTML =
-'<img src="' + reader.result + '">';
-
-};
-
-reader.readAsDataURL(selectedFile);
-
+    reader.readAsDataURL(selectedFile);
 });
 
 
+/* TOAST */
 function showToast(message){
 
-var toast = document.getElementById("toast");
+    var toast = document.getElementById("toast");
 
-toast.innerText = message;
+    toast.innerText = message;
+    toast.classList.add("show");
 
-toast.classList.add("show");
-
-setTimeout(function(){
-toast.classList.remove("show");
-}, 2000);
-
+    setTimeout(function(){
+        toast.classList.remove("show");
+    }, 2000);
 }
 
 
+/* CREATE POST */
 async function createPost(){
 
-if(!selectedFile){
-showToast("Choisis une image");
-return;
+    if(!selectedFile){
+        showToast("Choisis une image");
+        return;
+    }
+
+    var caption = document.getElementById("caption").value;
+
+
+    /* UPLOAD IMAGE */
+    var fileName = Date.now() + "_" + selectedFile.name;
+
+    var { data: uploadData, error: uploadError } =
+    await supabase.storage
+    .from("posts")
+    .upload(fileName, selectedFile);
+
+    if(uploadError){
+        showToast("Erreur upload");
+        return;
+    }
+
+
+    /* PUBLIC URL */
+    var { data: publicUrl } = supabase.storage
+    .from("posts")
+    .getPublicUrl(fileName);
+
+
+    /* INSERT POST */
+    var { error } = await supabase
+    .from("posts")
+    .insert([{
+        owner: currentUser.id,
+        image: publicUrl.publicUrl,
+        caption: caption,
+        likes: 0
+    }]);
+
+    if(error){
+        showToast("Erreur post");
+        return;
+    }
+
+
+    showToast("Post publié");
+
+    setTimeout(function(){
+        location.href = "/home.html";
+    }, 1200);
 }
-
-var caption = document.getElementById("caption").value;
-
-var parseFile = new Parse.File(selectedFile.name, selectedFile);
-
-await parseFile.save();
-
-var Post = Parse.Object.extend("Posts");
-var post = new Post();
-
-post.set("owner", currentUser);
-post.set("image", parseFile);
-post.set("caption", caption);
-post.set("likes", 0);
-
-await post.save();
-
-showToast("Post publié");
-
-setTimeout(function(){
-location.href = "/home";
-}, 1200);
-
-}
-
-
-init();
 
 </script>
