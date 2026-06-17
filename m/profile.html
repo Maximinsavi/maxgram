@@ -1,139 +1,338 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<script src="https://unpkg.com/parse/dist/parse.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
+Parse.initialize(
+"BHxYtdxdSPMSH5vXHVdKCVTBrxMBlbPLhz2p4CRc",
+"88Fp770fFyWoBEXCljw9QhlaY6EPYcx9kR1sVpZV"
+);
+
+Parse.serverURL =
+"https://parseapi.back4app.com";
+
+</script>
+
+
+<div id="profile-page">
+
+<style>
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:white;
+}
+
+#header{
+height:50px;
+display:flex;
+align-items:center;
+border-bottom:1px solid #ddd;
+padding:0 15px;
+}
+
+#back{
+font-size:25px;
+cursor:pointer;
+}
+
+#title{
+flex:1;
+text-align:center;
+font-weight:700;
+}
+
+#profile{
+padding:20px;
+}
+
+.top{
+display:flex;
+align-items:center;
+}
+
+#avatarBox{
+width:95px;
+height:95px;
+border-radius:50%;
+overflow:hidden;
+border:1px solid #ddd;
+}
+
+#avatar{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.stats{
+flex:1;
+display:flex;
+justify-content:space-around;
+text-align:center;
+}
+
+.stats b{
+display:block;
+font-size:20px;
+}
+
+#username{
+font-size:20px;
+font-weight:bold;
+border:none;
+outline:none;
+margin-top:20px;
+width:100%;
+}
+
+#bio{
+width:100%;
+height:60px;
+border:none;
+resize:none;
+outline:none;
+}
+
+.buttons{
+display:flex;
+gap:10px;
+}
+
+button{
+flex:1;
+padding:10px;
+border-radius:8px;
+border:1px solid #ddd;
+background:white;
+font-weight:bold;
+}
+
+.primary{
+background:#1877f2;
+color:white;
+}
+
+#grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:3px;
+margin-top:20px;
+}
+
+.post{
+height:120px;
+background:#eee;
+}
+
+.post img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+</style>
+
+
+<div id="header">
+<div id="back" onclick="history.back()">‹</div>
+<div id="title">Profil</div>
+</div>
+
+
+<div id="profile">
+
+<div class="top">
+
+<div id="avatarBox" onclick="document.getElementById('file').click()">
+<img id="avatar">
+</div>
+
+<div class="stats">
+
+<div>
+<b id="postsCount">0</b>
+Posts
+</div>
+
+<div>
+<b id="followers">0</b>
+Followers
+</div>
+
+<div>
+<b id="following">0</b>
+Following
+</div>
+
+</div>
+
+</div>
+
+<input type="file" id="file" accept="image/*" style="display:none">
+
+<input id="username" placeholder="Nom utilisateur">
+
+<textarea id="bio" placeholder="Bio"></textarea>
+
+<div class="buttons">
+<button class="primary" onclick="saveProfile()">Modifier</button>
+<button>Partager</button>
+</div>
+
+<div id="grid"></div>
+
+</div>
+
+</div>
 
 
 <script>
 
-var supabaseUrl = "https://zcckclyeqawcaclzmabj.supabase.co";
-var supabaseKey = "sb_publishable_Vj1M_Jkv68n4EXuMmzjNow_RI05o_jh";
-
-var supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
 var currentUser = null;
-
-
-async function start(){
-
-    var { data: { session } } = await supabase.auth.getSession();
-
-    if(!session){
-        location.replace("/login.html");
-        return;
-    }
-
-    currentUser = session.user;
-
-    await loadUser();
-    await loadPosts();
-}
-
-
-/* ---------------- USER ---------------- */
-
-async function loadUser(){
-
-    var { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", currentUser.id)
-    .single();
-
-    if(error) return;
-
-    document.getElementById("username").value = data.username || "";
-    document.getElementById("bio").value = data.bio || "";
-
-    document.getElementById("postsCount").innerHTML = data.posts_count || 0;
-    document.getElementById("followers").innerHTML = data.followers || 0;
-    document.getElementById("following").innerHTML = data.following || 0;
-
-    if(data.avatar){
-        document.getElementById("avatar").src = data.avatar;
-    } else {
-        document.getElementById("avatar").src =
-        "https://ui-avatars.com/api/?name=" + (data.username || "User");
-    }
-}
-
-
-/* ---------------- UPLOAD AVATAR ---------------- */
-
-document.getElementById("file")
-.addEventListener("change", async function(e){
-
-    var file = e.target.files[0];
-    if(!file) return;
-
-    var fileName = Date.now() + "_" + file.name;
-
-    var { data, error } = await supabase.storage
-    .from("avatars")
-    .upload(fileName, file);
-
-    if(error) return;
-
-    var { data: publicUrl } = supabase.storage
-    .from("avatars")
-    .getPublicUrl(fileName);
-
-    await supabase
-    .from("profiles")
-    .update({ avatar: publicUrl.publicUrl })
-    .eq("id", currentUser.id);
-
-    document.getElementById("avatar").src = publicUrl.publicUrl;
-});
-
-
-/* ---------------- SAVE PROFILE ---------------- */
-
-async function saveProfile(){
-
-    await supabase
-    .from("profiles")
-    .update({
-        username: document.getElementById("username").value,
-        bio: document.getElementById("bio").value
-    })
-    .eq("id", currentUser.id);
-
-    alert("Profil enregistré");
-}
-
-
-/* ---------------- POSTS ---------------- */
-
-async function loadPosts(){
-
-    var { data: posts, error } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("owner", currentUser.id)
-    .order("created_at", { ascending: false });
-
-    if(error) return;
-
-    var grid = document.getElementById("grid");
-    grid.innerHTML = "";
-
-    posts.forEach(function(post){
-
-        if(!post.image) return;
-
-        var div = document.createElement("div");
-        div.className = "post";
-
-        div.innerHTML = `<img src="${post.image}">`;
-
-        grid.appendChild(div);
-    });
-}
 
 
 /* START */
 start();
 
+
+async function start(){
+
+    try {
+
+        currentUser = await Parse.User.currentAsync();
+
+        if(!currentUser){
+            location.replace("/login.html");
+            return;
+        }
+
+        await currentUser.fetch();
+
+        loadUser();
+        loadPosts();
+
+    } catch (e) {
+        console.log("START ERROR:", e);
+    }
+}
+
+
+/* LOAD USER */
+function loadUser(){
+
+    document.getElementById("username").value =
+    currentUser.get("username") || "";
+
+    document.getElementById("bio").value =
+    currentUser.get("bio") || "";
+
+    document.getElementById("postsCount").innerText =
+    currentUser.get("postsCount") || 0;
+
+    document.getElementById("followers").innerText =
+    currentUser.get("followers") || 0;
+
+    document.getElementById("following").innerText =
+    currentUser.get("following") || 0;
+
+    var avatar = currentUser.get("avatar");
+
+    if(avatar && avatar.url){
+        document.getElementById("avatar").src = avatar.url();
+    } else {
+        document.getElementById("avatar").src =
+        "https://ui-avatars.com/api/?name=" + (currentUser.get("username") || "User");
+    }
+}
+
+
+/* SAVE PROFILE */
+async function saveProfile(){
+
+    try {
+
+        currentUser.set(
+            "username",
+            document.getElementById("username").value
+        );
+
+        currentUser.set(
+            "bio",
+            document.getElementById("bio").value
+        );
+
+        await currentUser.save();
+
+        alert("Profil enregistré");
+
+    } catch (e) {
+        console.log(e);
+        alert("Erreur sauvegarde");
+    }
+}
+
+
+/* AVATAR UPLOAD */
+document.getElementById("file").addEventListener("change", async function(e){
+
+    try {
+
+        var file = e.target.files[0];
+        if(!file) return;
+
+        var parseFile = new Parse.File(file.name, file);
+
+        await parseFile.save();
+
+        currentUser.set("avatar", parseFile);
+        await currentUser.save();
+
+        document.getElementById("avatar").src = parseFile.url();
+
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+
+/* LOAD POSTS */
+async function loadPosts(){
+
+    try {
+
+        var query = new Parse.Query("Posts");
+
+        query.equalTo("owner", currentUser);
+        query.descending("createdAt");
+
+        var posts = await query.find();
+
+        var grid = document.getElementById("grid");
+        grid.innerHTML = "";
+
+        posts.forEach(function(post){
+
+            var image = post.get("image");
+            if(!image || !image.url) return;
+
+            var div = document.createElement("div");
+            div.className = "post";
+
+            div.innerHTML = `<img src="${image.url()}">`;
+
+            grid.appendChild(div);
+
+        });
+
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 </script>
+
+</div>
