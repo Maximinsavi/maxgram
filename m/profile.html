@@ -3,6 +3,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<div id="toast"></div>
+
 <div id="profile-page">
 
 <style>
@@ -10,43 +12,41 @@
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-background:white;
+background:#f6f7f9;
 }
 
+/* HEADER */
 #header{
-height:50px;
+height:55px;
 display:flex;
 align-items:center;
+justify-content:center;
+background:white;
 border-bottom:1px solid #ddd;
-padding:0 15px;
-}
-
-#back{
-font-size:25px;
-cursor:pointer;
-}
-
-#title{
-flex:1;
-text-align:center;
 font-weight:700;
 }
 
-#profile{
-padding:20px;
+/* CARD */
+.card{
+background:white;
+margin:12px;
+padding:15px;
+border-radius:12px;
 }
 
-.top{
-display:flex;
-align-items:center;
-}
-
+/* AVATAR */
 #avatarBox{
-width:95px;
-height:95px;
+width:90px;
+height:90px;
 border-radius:50%;
 overflow:hidden;
-border:1px solid #ddd;
+border:2px solid #eee;
+cursor:pointer;
+transition:0.2s;
+}
+
+#avatarBox:active{
+transform:scale(0.95);
 }
 
 #avatar{
@@ -55,102 +55,108 @@ height:100%;
 object-fit:cover;
 }
 
+/* INPUTS */
+input,textarea{
+width:100%;
+margin-top:10px;
+padding:10px;
+border-radius:10px;
+border:1px solid #ddd;
+outline:none;
+font-size:14px;
+}
+
+textarea{
+resize:none;
+height:70px;
+}
+
+/* BUTTON */
+button{
+width:100%;
+margin-top:12px;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#1877f2;
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:active{
+transform:scale(0.98);
+}
+
+/* STATS */
 .stats{
-flex:1;
 display:flex;
 justify-content:space-around;
 text-align:center;
+margin-top:10px;
 }
 
 .stats b{
 display:block;
-font-size:20px;
+font-size:18px;
 }
 
-#username{
-font-size:20px;
-font-weight:bold;
-border:none;
-outline:none;
-margin-top:20px;
-width:100%;
-}
-
-#bio{
-width:100%;
-height:60px;
-border:none;
-resize:none;
-outline:none;
-}
-
-button{
-flex:1;
-padding:10px;
-border-radius:8px;
-border:1px solid #ddd;
-background:white;
-font-weight:bold;
-}
-
-.primary{
-background:#1877f2;
+/* TOAST */
+#toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#111;
 color:white;
+padding:12px 16px;
+border-radius:10px;
+font-size:14px;
+opacity:0;
+transition:0.3s;
+pointer-events:none;
 }
 
-#grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:3px;
-margin-top:20px;
-}
-
-.post{
-height:120px;
-background:#eee;
-}
-
-.post img{
-width:100%;
-height:100%;
-object-fit:cover;
+#toast.show{
+opacity:1;
+transform:translateX(-50%) translateY(-8px);
 }
 
 </style>
 
 
-<div id="header">
-<div id="back" onclick="history.back()">‹</div>
-<div id="title">Profil</div>
-</div>
+<div id="header">Profil</div>
 
 
-<div id="profile">
+<div class="card">
 
-<div class="top">
+<div style="display:flex;gap:15px;align-items:center;">
 
 <div id="avatarBox" onclick="document.getElementById('file').click()">
 <img id="avatar">
 </div>
 
-<div class="stats">
-<div><b id="postsCount">0</b> Posts</div>
-<div><b id="followers">0</b> Followers</div>
-<div><b id="following">0</b> Following</div>
-</div>
-
-</div>
-
-<input type="file" id="file" style="display:none">
-
+<div style="flex:1">
 <input id="username" placeholder="Nom utilisateur">
 <textarea id="bio" placeholder="Bio"></textarea>
-
-<button class="primary" onclick="saveProfile()">Modifier</button>
-
-<div id="grid"></div>
+</div>
 
 </div>
+
+
+<div class="stats">
+<div><b id="postsCount">0</b>Posts</div>
+<div><b id="followers">0</b>Followers</div>
+<div><b id="following">0</b>Following</div>
+</div>
+
+<button onclick="saveProfile()">Enregistrer</button>
+
+</div>
+
+<input type="file" id="file" accept="image/*" style="display:none">
+
 </div>
 
 
@@ -164,57 +170,56 @@ var supabase = supabase.createClient(supabaseUrl, supabaseKey);
 var currentUser = null;
 
 
-/* START REAL SESSION CHECK */
-start();
+/* START */
+init();
 
-async function start(){
+
+async function init(){
 
     const { data: { session } } = await supabase.auth.getSession();
 
-    console.log("SESSION:", session);
-
     if(!session || !session.user){
-        location.replace("/login.html");
+        location.href = "/login.html";
         return;
     }
 
     currentUser = session.user;
 
-    await loadUser();
-    await loadPosts();
+    await loadProfile();
 }
 
 
-/* LOAD USER (REAL SUPABASE) */
-async function loadUser(){
+/* LOAD PROFILE */
+async function loadProfile(){
 
-    const { data, error } = await supabase
+    const { data } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", currentUser.id)
     .maybeSingle();
 
-    console.log("PROFILE:", data, error);
-
-    const username = data?.username || currentUser.email || "User";
-    const avatar = data?.avatar;
+    const username =
+        data?.username ||
+        currentUser.email ||
+        "User";
 
     document.getElementById("username").value = data?.username || "";
     document.getElementById("bio").value = data?.bio || "";
 
-    document.getElementById("avatar").src =
-        avatar || "https://ui-avatars.com/api/?name=" + username;
-
     document.getElementById("postsCount").innerText = data?.posts_count || 0;
     document.getElementById("followers").innerText = data?.followers || 0;
     document.getElementById("following").innerText = data?.following || 0;
+
+    document.getElementById("avatar").src =
+        data?.avatar ||
+        "https://ui-avatars.com/api/?name=" + username;
 }
 
 
 /* SAVE PROFILE */
 async function saveProfile(){
 
-    await supabase
+    const { error } = await supabase
     .from("profiles")
     .update({
         username: document.getElementById("username").value,
@@ -222,35 +227,15 @@ async function saveProfile(){
     })
     .eq("id", currentUser.id);
 
-    alert("Profil enregistré");
+    if(error){
+        toast("Erreur sauvegarde ❌");
+    } else {
+        toast("Profil mis à jour ✅");
+    }
 }
 
 
-/* LOAD POSTS */
-async function loadPosts(){
-
-    const { data } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("owner", currentUser.id)
-    .order("created_at", { ascending: false });
-
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
-
-    (data || []).forEach(post => {
-
-        const div = document.createElement("div");
-        div.className = "post";
-
-        div.innerHTML = `<img src="${post.image}">`;
-
-        grid.appendChild(div);
-    });
-}
-
-
-/* FILE UPLOAD AVATAR */
+/* AVATAR CHANGE (FLUID + AUTO SAVE) */
 document.getElementById("file").addEventListener("change", async function(e){
 
     const file = e.target.files[0];
@@ -263,7 +248,7 @@ document.getElementById("file").addEventListener("change", async function(e){
     .upload(fileName, file);
 
     if(error){
-        alert("Upload error");
+        toast("Upload échoué ❌");
         return;
     }
 
@@ -271,12 +256,30 @@ document.getElementById("file").addEventListener("change", async function(e){
     .from("avatars")
     .getPublicUrl(fileName);
 
+    const url = data.publicUrl;
+
     await supabase
     .from("profiles")
-    .update({ avatar: data.publicUrl })
+    .update({ avatar: url })
     .eq("id", currentUser.id);
 
-    document.getElementById("avatar").src = data.publicUrl;
+    document.getElementById("avatar").src = url;
+
+    toast("Photo mise à jour ✅");
 });
+
+
+/* TOAST SYSTEM */
+function toast(msg){
+
+    var t = document.getElementById("toast");
+
+    t.innerText = msg;
+    t.classList.add("show");
+
+    setTimeout(function(){
+        t.classList.remove("show");
+    }, 2000);
+}
 
 </script>
