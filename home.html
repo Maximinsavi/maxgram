@@ -1,6 +1,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 
+<!-- HEADER + APP -->
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -20,29 +21,34 @@ html, body{
     background:#fff;
 }
 
-/* HEADER MOBILE FIX */
+/* IMPORTANT POUR ÉVITER CHEVAUCHEMENT */
+body{
+    padding-top:56px;
+}
+
+
+/* HEADER */
 #app-header{
     position:fixed;
     top:0;
     left:0;
     right:0;
 
-    width:100%;
     height:56px;
-
-    background:white;
 
     display:flex;
     align-items:center;
     justify-content:space-around;
 
+    background:#fff;
+
     border-bottom:1px solid #e5e5e5;
 
     z-index:999999;
-
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
 }
 
+
+/* LINKS */
 #app-header a{
     flex:1;
     height:100%;
@@ -60,7 +66,6 @@ html, body{
     stroke:#1c1e21;
 }
 
-/* ACTIVE */
 #app-header a.active{
     background:#eaf2ff;
 }
@@ -73,39 +78,47 @@ html, body{
 
 
 
-
+<!-- HOME -->
 <a href="/home.html" class="active">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M4 10L12 3L20 10V21H14V14H10V21H4V10Z" stroke-width="2"/>
+<path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" stroke-width="2"/>
 </svg>
 </a>
 
 
+<!-- SEARCH -->
 <a href="/m/search.html">
 <svg viewBox="0 0 24 24" fill="none">
-<circle cx="11" cy="11" r="7" stroke-width="2"/>
-<path d="M20 20L16 16" stroke-width="2"/>
+<circle cx="10.5" cy="10.5" r="6.5" stroke-width="2"/>
+<path d="M16 16l5 5" stroke-width="2"/>
 </svg>
 </a>
 
 
+<!-- USERS -->
+<a href="/m/users.html">
+<svg viewBox="0 0 24 24" fill="none">
+<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke-width="2"/>
+<circle cx="9" cy="7" r="4" stroke-width="2"/>
+<path d="M22 21v-2a3 3 0 0 0-2-2.9" stroke-width="2"/>
+<circle cx="17" cy="7" r="3" stroke-width="2"/>
+</svg>
+</a>
+
+
+<!-- MESSAGES -->
 <a href="/m/messages.html">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M21 12C21 17 17 20 12 20H3V6H21Z" stroke-width="2"/>
+<path d="M4 4h16v12H5.5L4 17.5V4z" stroke-width="2"/>
 </svg>
 </a>
 
 
+<!-- NOTIFICATIONS -->
 <a href="/m/notifications.html">
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M18 8C18 4 15 3 12 3C9 3 6 4 6 8C6 15 4 16 4 18H20C20 16 18 15 18 8Z" stroke-width="2"/>
-</svg>
-</a>
-
-
-<a href="/m/menu.html">
-<svg viewBox="0 0 24 24" fill="none">
-<path d="M4 7H20M4 12H20M4 17H20" stroke-linecap="round" stroke-width="2"/>
+<path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2z" stroke-width="2"/>
+<path d="M18 16V11a6 6 0 1 0-12 0v5l-2 2h16l-2-2z" stroke-width="2"/>
 </svg>
 </a>
 
@@ -118,6 +131,7 @@ document.body.insertAdjacentHTML("afterbegin", html);
 });
 
 </script>
+
 
 
 
@@ -169,6 +183,11 @@ document.body.insertAdjacentHTML("afterbegin", html);
     font-size:16px;
 }
 
+#composer-input:active{
+    transform:scale(0.98);
+    background:#e4e6ea;
+}
+
 </style>
 
 
@@ -183,6 +202,7 @@ placeholder="Quoi de neuf ?"
 onclick="location.href='/m/publier.html'">
 
 </div>
+
 
 
 
