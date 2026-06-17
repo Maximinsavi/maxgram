@@ -5,7 +5,7 @@
 
 <div id="toast"></div>
 
-<div id="profile-page">
+<div id="page">
 
 <style>
 
@@ -82,11 +82,6 @@ background:#1877f2;
 color:white;
 font-weight:600;
 cursor:pointer;
-transition:0.2s;
-}
-
-button:active{
-transform:scale(0.98);
 }
 
 /* STATS */
@@ -128,7 +123,6 @@ transform:translateX(-50%) translateY(-8px);
 
 <div id="header">Profil</div>
 
-
 <div class="card">
 
 <div style="display:flex;gap:15px;align-items:center;">
@@ -143,7 +137,6 @@ transform:translateX(-50%) translateY(-8px);
 </div>
 
 </div>
-
 
 <div class="stats">
 <div><b id="postsCount">0</b>Posts</div>
@@ -170,9 +163,8 @@ var supabase = supabase.createClient(supabaseUrl, supabaseKey);
 var currentUser = null;
 
 
-/* START */
+/* INIT AUTH (REAL SUPABASE SESSION) */
 init();
-
 
 async function init(){
 
@@ -192,7 +184,7 @@ async function init(){
 /* LOAD PROFILE */
 async function loadProfile(){
 
-    const { data } = await supabase
+    const { data, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", currentUser.id)
@@ -216,39 +208,42 @@ async function loadProfile(){
 }
 
 
-/* SAVE PROFILE */
+/* SAVE PROFILE (NO FAKE ERROR POPUPS) */
 async function saveProfile(){
 
     const { error } = await supabase
     .from("profiles")
-    .update({
+    .upsert({
+        id: currentUser.id,
         username: document.getElementById("username").value,
         bio: document.getElementById("bio").value
-    })
-    .eq("id", currentUser.id);
+    });
 
     if(error){
-        toast("Erreur sauvegarde ❌");
-    } else {
-        toast("Profil mis à jour ✅");
+        console.log(error);
+        toast("Erreur serveur");
+        return;
     }
+
+    toast("Profil sauvegardé");
 }
 
 
-/* AVATAR CHANGE (FLUID + AUTO SAVE) */
+/* AVATAR UPLOAD (SUPABASE STORAGE) */
 document.getElementById("file").addEventListener("change", async function(e){
 
     const file = e.target.files[0];
     if(!file) return;
 
-    const fileName = Date.now() + "_" + file.name;
+    const fileName = currentUser.id + "_" + Date.now();
 
     const { error } = await supabase.storage
     .from("avatars")
     .upload(fileName, file);
 
     if(error){
-        toast("Upload échoué ❌");
+        console.log(error);
+        toast("Upload échoué");
         return;
     }
 
@@ -260,16 +255,18 @@ document.getElementById("file").addEventListener("change", async function(e){
 
     await supabase
     .from("profiles")
-    .update({ avatar: url })
-    .eq("id", currentUser.id);
+    .upsert({
+        id: currentUser.id,
+        avatar: url
+    });
 
     document.getElementById("avatar").src = url;
 
-    toast("Photo mise à jour ✅");
+    toast("Photo mise à jour");
 });
 
 
-/* TOAST SYSTEM */
+/* TOAST UI */
 function toast(msg){
 
     var t = document.getElementById("toast");
