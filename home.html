@@ -1,7 +1,9 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
-
 
 var html = `
 
@@ -9,70 +11,62 @@ var html = `
 
 <style>
 
-body{
+html, body{
     margin:0;
-    padding-top:4.6rem;
+    padding:0;
+    width:100%;
+    overflow-x:hidden;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+    background:#fff;
 }
 
-
-/* HEADER FIXE */
+/* HEADER MOBILE FIX */
 #app-header{
     position:fixed;
     top:0;
     left:0;
+    right:0;
 
     width:100%;
-    height:4.6rem;
+    height:56px;
 
     background:white;
-
-    border-bottom:1px solid #e5e5e5;
 
     display:flex;
     align-items:center;
     justify-content:space-around;
 
-    z-index:2147483647;
+    border-bottom:1px solid #e5e5e5;
 
-    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    z-index:999999;
+
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
 }
 
-
-/* LINKS */
 #app-header a{
-    width:3.2rem;
-    height:3.2rem;
+    flex:1;
+    height:100%;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    border-radius:12px;
-
     text-decoration:none;
 }
 
-
-#app-header a:active{
-    background:#f0f2f5;
+#app-header svg{
+    width:24px;
+    height:24px;
+    stroke:#1c1e21;
 }
 
-
+/* ACTIVE */
 #app-header a.active{
     background:#eaf2ff;
 }
 
-
 #app-header a.active svg{
     stroke:#1877f2;
-}
-
-
-#app-header svg{
-    width:1.8rem;
-    height:1.8rem;
-    stroke:#1c1e21;
 }
 
 </style>
@@ -81,61 +75,38 @@ body{
 
 
 <a href="/home.html" class="active">
-
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M4 10L12 3L20 10V21H14V14H10V21H4V10Z"
-stroke-width="2"/>
+<path d="M4 10L12 3L20 10V21H14V14H10V21H4V10Z" stroke-width="2"/>
 </svg>
-
 </a>
 
 
-
-
 <a href="/m/search.html">
-
 <svg viewBox="0 0 24 24" fill="none">
 <circle cx="11" cy="11" r="7" stroke-width="2"/>
 <path d="M20 20L16 16" stroke-width="2"/>
 </svg>
-
 </a>
-
-
 
 
 <a href="/m/messages.html">
-
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M21 12C21 17 17 20 12 20H3V6H21Z"
-stroke-width="2"/>
+<path d="M21 12C21 17 17 20 12 20H3V6H21Z" stroke-width="2"/>
 </svg>
-
 </a>
-
-
 
 
 <a href="/m/notifications.html">
-
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M18 8C18 4 15 3 12 3C9 3 6 4 6 8C6 15 4 16 4 18H20C20 16 18 15 18 8Z"
-stroke-width="2"/>
+<path d="M18 8C18 4 15 3 12 3C9 3 6 4 6 8C6 15 4 16 4 18H20C20 16 18 15 18 8Z" stroke-width="2"/>
 </svg>
-
 </a>
 
 
-
-
 <a href="/m/menu.html">
-
 <svg viewBox="0 0 24 24" fill="none">
-<path d="M4 7H20M4 12H20M4 17H20"
-stroke-linecap="round"
-stroke-width="2"/>
+<path d="M4 7H20M4 12H20M4 17H20" stroke-linecap="round" stroke-width="2"/>
 </svg>
-
 </a>
 
 </div>
@@ -151,13 +122,72 @@ document.body.insertAdjacentHTML("afterbegin", html);
 
 
 
+<!-- COMPOSER -->
+<div id="composer-box">
+
+<style>
+
+#composer-box{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    padding:12px 14px;
+
+    border-bottom:1px solid #e5e5e5;
+
+    box-sizing:border-box;
+}
+
+#composer-avatar{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#ddd;
+    flex-shrink:0;
+}
+
+#composer-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+#composer-input{
+    flex:1;
+    height:46px;
+
+    border:none;
+    border-radius:999px;
+
+    background:#f0f2f5;
+
+    padding:0 16px;
+
+    font-size:16px;
+}
+
+</style>
+
+
+<div id="composer-avatar">
+    <img id="userAvatar">
+</div>
+
+<input id="composer-input"
+type="text"
+readonly
+placeholder="Quoi de neuf ?"
+onclick="location.href='/m/publier.html'">
+
+</div>
 
 
 
 
-
-
-
+<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -179,7 +209,6 @@ document.addEventListener("DOMContentLoaded", async function(){
     "https://ui-avatars.com/api/?name=User&background=ccc&color=fff&size=128";
 
     var result = await supabaseClient.auth.getSession();
-
     var session = result.data.session;
 
     if(session){
