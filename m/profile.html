@@ -12,34 +12,37 @@
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-background:white;
+background:#f6f7f9;
 }
 
-/* HEADER INSTAGRAM STYLE */
+/* HEADER */
 #header{
-height:50px;
+height:55px;
 display:flex;
 align-items:center;
 justify-content:center;
-border-bottom:1px solid #eee;
+background:white;
+border-bottom:1px solid #ddd;
 font-weight:600;
 }
 
-/* PROFILE TOP */
-.top{
-display:flex;
+/* PROFILE */
+.card{
+background:white;
+margin:12px;
 padding:15px;
-gap:15px;
-align-items:center;
+border-radius:12px;
 }
 
 /* AVATAR */
 #avatarBox{
-width:85px;
-height:85px;
+width:95px;
+height:95px;
 border-radius:50%;
 overflow:hidden;
-border:1px solid #ddd;
+border:2px solid #eee;
+cursor:pointer;
+position:relative;
 }
 
 #avatar{
@@ -48,17 +51,16 @@ height:100%;
 object-fit:cover;
 }
 
-/* STATS */
-.stats{
-flex:1;
-display:flex;
-justify-content:space-around;
-text-align:center;
-}
-
-.stats b{
-display:block;
-font-size:16px;
+/* CAMERA ICON OVERLAY */
+#camera{
+position:absolute;
+bottom:0;
+right:0;
+background:#1877f2;
+color:white;
+font-size:12px;
+padding:5px 7px;
+border-radius:50%;
 }
 
 /* INPUTS */
@@ -79,33 +81,28 @@ resize:none;
 
 /* BUTTON */
 button{
-width:calc(100% - 30px);
-margin:15px;
+width:100%;
+margin-top:12px;
 padding:12px;
 border:none;
 border-radius:10px;
 background:#1877f2;
 color:white;
 font-weight:600;
+cursor:pointer;
 }
 
-/* GRID POSTS */
-#grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:2px;
+/* STATS */
+.stats{
+display:flex;
+justify-content:space-around;
+text-align:center;
 margin-top:10px;
 }
 
-.post{
-height:120px;
-background:#eee;
-}
-
-.post img{
-width:100%;
-height:100%;
-object-fit:cover;
+.stats b{
+display:block;
+font-size:18px;
 }
 
 /* TOAST */
@@ -132,10 +129,20 @@ transform:translateX(-50%) translateY(-6px);
 
 <div id="header">Profil</div>
 
-<div class="top">
+<div class="card">
+
+<div style="display:flex;gap:15px;align-items:center;">
 
 <div id="avatarBox" onclick="document.getElementById('file').click()">
 <img id="avatar">
+<div id="camera">📷</div>
+</div>
+
+<div style="flex:1">
+<input id="username" placeholder="Nom utilisateur">
+<textarea id="bio" placeholder="Bio"></textarea>
+</div>
+
 </div>
 
 <div class="stats">
@@ -144,16 +151,11 @@ transform:translateX(-50%) translateY(-6px);
 <div><b id="following">0</b>Following</div>
 </div>
 
-</div>
-
-<input id="username" placeholder="Nom utilisateur">
-<textarea id="bio" placeholder="Bio"></textarea>
-
 <button onclick="saveProfile()">Enregistrer</button>
 
-<div id="grid"></div>
+</div>
 
-<input type="file" id="file" style="display:none">
+<input type="file" id="file" accept="image/*" style="display:none">
 
 </div>
 
@@ -166,6 +168,7 @@ var supabaseKey = "sb_publishable_Vj1M_Jkv68n4EXuMmzjNow_RI05o_jh";
 var supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 var user = null;
+var localPreview = null;
 
 init();
 
@@ -181,9 +184,10 @@ async function init(){
     user = session.user;
 
     await loadProfile();
-    await loadPosts();
 }
 
+
+/* LOAD */
 async function loadProfile(){
 
     const { data } = await supabase
@@ -205,72 +209,80 @@ async function loadProfile(){
         data?.avatar || "https://ui-avatars.com/api/?name=" + name;
 }
 
-async function saveProfile(){
 
-    const { error } = await supabase
-    .from("profiles")
-    .upsert({
-        id: user.id,
-        username: document.getElementById("username").value,
-        bio: document.getElementById("bio").value
-    });
-
-    toast(error ? "Erreur" : "Profil sauvegardé");
-}
-
-document.getElementById("file").addEventListener("change", async function(e){
+/* PHOTO CHANGE (NEW METHOD) */
+document.getElementById("file").addEventListener("change", function(e){
 
     const file = e.target.files[0];
     if(!file) return;
 
-    const fileName = user.id + "-" + Date.now();
+    const reader = new FileReader();
 
-    const { error } = await supabase.storage
-    .from("avatars")
-    .upload(fileName, file);
+    reader.onload = function(){
 
-    if(error){
-        toast("Upload erreur");
-        return;
-    }
+        // PREVIEW INSTANT (NO ERROR HERE)
+        document.getElementById("avatar").src = reader.result;
 
-    const { data } = supabase.storage
-    .from("avatars")
-    .getPublicUrl(fileName);
+        localPreview = file;
+    };
 
-    await supabase
-    .from("profiles")
-    .upsert({
-        id: user.id,
-        avatar: data.publicUrl
-    });
-
-    document.getElementById("avatar").src = data.publicUrl;
-
-    toast("Photo mise à jour");
+    reader.readAsDataURL(file);
 });
 
-async function loadPosts(){
 
-    const { data } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("owner", user.id)
-    .order("created_at", { ascending:false });
+/* SAVE */
+async function saveProfile(){
 
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
+    try {
 
-    (data || []).forEach(p => {
+        let avatarUrl = null;
 
-        const div = document.createElement("div");
-        div.className = "post";
-        div.innerHTML = `<img src="${p.image}">`;
-        grid.appendChild(div);
+        // upload only if new image selected
+        if(localPreview){
 
-    });
+            const fileName = user.id + "_" + Date.now();
+
+            const { error: uploadError } = await supabase.storage
+            .from("avatars")
+            .upload(fileName, localPreview);
+
+            if(uploadError){
+                toast("Upload bloqué");
+                return;
+            }
+
+            const { data } = supabase.storage
+            .from("avatars")
+            .getPublicUrl(fileName);
+
+            avatarUrl = data.publicUrl;
+        }
+
+        const { error } = await supabase
+        .from("profiles")
+        .upsert({
+            id: user.id,
+            username: document.getElementById("username").value,
+            bio: document.getElementById("bio").value,
+            ...(avatarUrl ? { avatar: avatarUrl } : {})
+        });
+
+        if(error){
+            toast("Erreur sauvegarde");
+            return;
+        }
+
+        toast("Profil mis à jour");
+
+        localPreview = null;
+
+    } catch (e) {
+        toast("Erreur système");
+    }
 }
 
+
+/* TOAST */
 function toast(msg){
 
     const t = document.getElementById("toast");
